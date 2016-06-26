@@ -1,0 +1,3 @@
+node_modules
+app/third-party-libs/*
+!app/third-party-libs/forza

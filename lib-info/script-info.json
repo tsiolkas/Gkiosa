@@ -1,0 +1,38 @@
+[
+  {
+    "name": "lodash",
+    "path": "app/third-party-libs/lodash/dist/lodash.js"
+  },
+  {
+    "name": "jquery",
+    "path": "app/third-party-libs/jquery/dist/jquery.js"
+  },
+  {
+    "name": "angular",
+    "path": "app/third-party-libs/angular/angular.js"
+  },
+  {
+    "name": "angular-ui-router",
+    "path": "app/third-party-libs/angular-ui-router/release/angular-ui-router.js"
+  },
+  {
+    "name": "angular-bootstrap",
+    "path": "app/third-party-libs/angular-bootstrap/ui-bootstrap.js"
+  },
+  {
+    "name": "angular-bootstrap-tpls",
+    "path": "app/third-party-libs/angular-bootstrap/ui-bootstrap-tpls.js"
+  },
+  {
+    "name": "angular-busy",
+    "path": "app/third-party-libs/angular-busy/angular-busy.js"
+  },
+  {
+    "name": "angular-table",
+    "path": "app/third-party-libs/ng-table/dist/ng-table.js"
+  },
+  {
+    "name": "nedb",
+    "path": "app/third-party-libs/nedb/browser-version/out/nedb.js"
+  }
+]

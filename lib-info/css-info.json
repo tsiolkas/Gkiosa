@@ -1,0 +1,18 @@
+[
+  {
+    "name": "font-awesome",
+    "path": "app/third-party-libs/font-awesome/css/font-awesome.css"
+  },
+  {
+    "name": "angular-busy",
+    "path": "app/third-party-libs/angular-busy/angular-busy.css"
+  },
+  {
+    "name": "load-awesome",
+    "path": "app/third-party-libs/load-awesome/css/ball-clip-rotate.css"
+  },
+  {
+    "name": "agnular-table",
+    "path": "app/third-party-libs/ng-table/dist/ng-table.css"
+  }
+]
