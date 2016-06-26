@@ -11,7 +11,7 @@ angular.module('gkiosa.app.sections.users.user', [
     reloadOnSearch: false,
     getBreadcrumbName: params => [
         {
-          sref: 'users.all',
+          sref: `users.all({vector: '${params.vector}'})`,
           name: params.vector === 'SUPPLIERS' ? 'Προμηθευτές' : 'Πελάτες'
         },
         {

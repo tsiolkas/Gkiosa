@@ -5,6 +5,8 @@
 Gkiosa is intended to run using `Electron` as desktop application.
 For the purpose of development we port it as a static frontend angular application using gulp for build and development
 
+Currentrly, the text content is in *Greek*, there is no support for other languages.
+
 ## Building
 
 * Clone this repo

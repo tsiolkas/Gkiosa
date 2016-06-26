@@ -6,13 +6,17 @@ angular.module('gkiosa.app', [
   'gkiosa.app.sections.users',
   'gkiosa.app.sections.users.user',
   'gkiosa.app.sections.users.allUsers',
+  'gkiosa.app.sections.products',
+  'gkiosa.app.sections.products.product',
+  'gkiosa.app.sections.products.allProducts',
   'gkiosa.app.components.alerts',
-  'gkiosa.app.components.gkiosaApi'
+  'gkiosa.app.components.gkiosaApi',
+  'gkiosa.app.components.pagination'
 ])
 
 .value('cgBusyDefaults', {
   templateUrl: 'components/theming/cg-busy-template.html',
-  minDuration: 100
+  minDuration: 200
 })
 
 .controller('AppController', AppController)
@@ -62,10 +66,16 @@ function AppController($rootScope, $scope, $state) {
       id: 'receipts.all.suppliers'
     },
     {
-      sref: "products.all()",
-      name: 'Προιόντα',
+      sref: "products.all({vector: 'CUSTOMERS'})",
+      name: 'Προιόντα πώλησης',
       icon: 'fa-th-large',
-      id: 'products.all'
+      id: 'products.all.customers'
+    },
+    {
+      sref: "products.all({vector: 'SUPPLIERS'})",
+      name: 'Προιόντα αγοράς',
+      icon: 'fa-th-large',
+      id: 'products.all.suppliers'
     }
   ];
   self.sidebarMenuClicked = sidebarMenuClicked;

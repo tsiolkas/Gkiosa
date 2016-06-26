@@ -10,16 +10,21 @@ function gkiosaApi($q) {
 
   const Datastore = getDBDriver();
   const db = createDbs();
-  var dbNames = ['users']; // createDbs does not bind the variable
 
-  // insertFakeUsers();
+  // insertFakeDocuments();
 
   return {
-    findUser,
-    findAllUsers,
-    createUser,
-    updateUser,
-    deleteUser
+    findUser: createSimpleCrudFind('users'),
+    findAllUsers: createSimpleCrudFindAll('users'),
+    createUser: createSimpleCrudCreate('users'),
+    updateUser: createSimpleCrudUpdate('users'),
+    deleteUser: createSimpleCrudDelete('users'),
+
+    findProduct: createSimpleCrudFind('products'),
+    findAllProducts: createSimpleCrudFindAll('products'),
+    createProduct: createSimpleCrudCreate('products'),
+    updateProduct: createSimpleCrudUpdate('products'),
+    deleteProduct: createSimpleCrudDelete('products')
   };
 
   function getDBDriver() {
@@ -34,7 +39,10 @@ function gkiosaApi($q) {
 
   function createDbs() {
     const db = {};
-    _.forEach(['users'], dbName => db[dbName] = new Datastore({ filename: `db/${dbName}.db`, autoload: true }));
+    _.forEach(
+        ['users', 'products'],
+        dbName => db[dbName] = new Datastore({ filename: `db/${dbName}.db`, autoload: true })
+      );
     return db;
   }
 
@@ -48,46 +56,48 @@ function gkiosaApi($q) {
     return (err, resp) => err ? deferred.reject(err) : deferred.resolve(successCb ? successCb(resp) : resp);
   }
 
-  function findUser(id) {
-    return deferredJob(deferred => db.users.find({ _id: id }, respHandle(deferred, users => _.first(users))));
+  function createSimpleCrudFind(dbName) {
+    return (id) => deferredJob(deferred => db[dbName].find({ _id: id }, respHandle(deferred, users => _.first(users))));
   }
 
-  function findAllUsers(find, pagination, sort) {
-    return $q.all([
-      deferredJob(countDeferred => db.users.count({}, respHandle(countDeferred))),
-      deferredJob(findDeferred => {
-        const cursor = db.users.find(find || {});
-        if (_.isObject(sort)) {
-          cursor.sort(sort);
-        }
-        if (_.isObject(pagination)) {
-          cursor.skip((pagination.page - 1) * pagination.count);
-          cursor.limit(pagination.count);
-        }
-        cursor.exec(respHandle(findDeferred));
-      })
-    ])
-    .then(results => {
+  function createSimpleCrudFindAll(dbName) {
+    return (find, pagination, sort) => {
+      return $q.all([
+        deferredJob(countDeferred => db[dbName].count({}, respHandle(countDeferred))),
+        deferredJob(findDeferred => {
+          const cursor = db[dbName].find(find || {});
+          if (_.isObject(sort)) {
+            cursor.sort(sort);
+          }
+          if (_.isObject(pagination)) {
+            cursor.skip((pagination.page - 1) * pagination.count);
+            cursor.limit(pagination.count);
+          }
+          cursor.exec(respHandle(findDeferred));
+        })
+      ])
+      .then(results => {
         return {
           total: results[0],
           results: results[1]
         };
-    });
+      });
+    }
   }
 
-  function createUser(user) {
-    return deferredJob(deferred => db.users.insert(user, respHandle(deferred, user => user)));
+  function createSimpleCrudCreate(dbName) {
+    return (record) => deferredJob(deferred => db[dbName].insert(record, respHandle(deferred, record => record)));
   }
 
-  function updateUser(id, user) {
-    return deferredJob(deferred => db.users.update({ _id: id }, user, {}, respHandle(deferred, user => user)));
+  function createSimpleCrudUpdate(dbName) {
+    return (id, record) => deferredJob(deferred => db[dbName].update({ _id: id }, record, {}, respHandle(deferred, record => record)));
   }
 
-  function deleteUser(id) {
-    return deferredJob(deferred => db.users.remove({ _id: id }, {}, respHandle(deferred, numRemoved => numRemoved)));
+  function createSimpleCrudDelete(dbName) {
+    return (id) => deferredJob(deferred => db[dbName].remove({ _id: id }, {}, respHandle(deferred, numRemoved => numRemoved)));
   }
 
-  function insertFakeUsers() {
+  function insertFakeDocuments() {
     const users = _.range(100).map(idx => {
       return {
         name: `name${idx}`,
@@ -96,11 +106,21 @@ function gkiosaApi($q) {
         vat: `vat${idx}`,
         taxAuthority: `taxAuthority${idx}`,
         address: `address${idx}`,
-        profession: `profession${idx}`
+        profession: `profession${idx}`,
+        vector: idx%2===0?'SUPPLIERS': 'CUSTOMERS'
       };
     });
+    createSimpleCrudCreate('users')(users);
 
-    createUser(users);
+    const products = _.range(100).map(idx => {
+      return {
+        productId: `name${idx}`,
+        name: `code${idx}`,
+        vat: 22,
+        vector: idx%2===0?'SUPPLIERS': 'CUSTOMERS'
+      };
+    });
+    createSimpleCrudCreate('products')(products);
   }
 }
 

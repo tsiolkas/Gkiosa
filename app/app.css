@@ -14319,8 +14319,11 @@ gkiosa-alerts {
   margin-right: 10px;
   color: #666;
 }
-.gks-all-users-controllers {
+.gks-all-controllers {
   margin-bottom: 15px;
+}
+input.gks-input-group-addon {
+  margin-left: 10px;
 }
 
 /*# sourceMappingURL=app.css.map */

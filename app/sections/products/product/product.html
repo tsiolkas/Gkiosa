@@ -1,0 +1,37 @@
+<div class="container" cg-busy="productCtrl.promiseOfProduct">
+  <span ng-hide="productCtrl.product || productCtrl.isNew">
+    Δεν βρέθηκε το προιόν
+  </span>
+  <form ng-show="productCtrl.product || productCtrl.isNew" role="form" class="form-horizontal">
+    <div class="form-group">
+      <label class="col-sm-1">Όνομα</label>
+      <div class="col-sm-5">
+        <input type="text" ng-model="productCtrl.product.name" class="form-control" placeholder="Όνομα"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-1">Αναγνωριστικό</label>
+      <div class="col-sm-5">
+        <input type="text" ng-model="productCtrl.product.productId" class="form-control" placeholder="Αναγνωριστικό"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-1">Φ.Π.Α</label>
+      <div class="col-sm-5 input-group">
+        <input type="number" ng-model="productCtrl.product.vat" class="form-control gks-input-group-addon" min="0" max="100" placeholder="24"/>
+        <span class="input-group-addon">%</span>
+      </div>
+    </div>
+    <hr>
+    <button type="submit" ng-if="productCtrl.isNew" class="btn btn-success" ng-click="productCtrl.createProduct(productCtrl.product)">
+      <i class="fa fa-file-o"></i> Καταχώρηση
+    </button>
+    <button type="submit" ng-if="!productCtrl.isNew" class="btn btn-success" ng-click="productCtrl.updateProduct(productCtrl.product)">
+      <i class="fa fa-save"></i> Αποθήκευση
+    </button>
+    <button type="submit" ng-if="!productCtrl.isNew" class="btn btn-danger" ng-click="productCtrl.deleteProduct(productCtrl.product)">
+      <i class="fa fa-trash-o"></i> Διαγραφή
+    </button>
+  </form>
+
+</div>
