@@ -1,0 +1,38 @@
+<div>
+  <div class="row">
+
+  <div class="col-xs-12 gks-all-controllers">
+    <a href="#" class="btn btn-success"
+      ui-sref="receipts.receipt({receiptId: 'new', vector: allReceiptsCtrl.vector })">
+      <i class="fa fa-plus"></i> Νέο προιόν
+    </a>
+  </div>
+
+  <div class="col-xs-12" cg-busy="allReceiptsCtrl.promise">
+    <table ng-table="allReceiptsCtrl.receiptsTableParams" show-filter="true" class="table table-bordered table-striped">
+<!--       <colgroup>
+        <col width="30%" />
+        <col width="30%" />
+        <col width="30%" />
+        <col width="10%" />
+      </colgroup> -->
+      <tr ng-repeat="row in $data track by row._id">
+        <td title="'Χρήστης'" filter2="{'user.name': 'string'}" sortable="'user.name'">{{row.user.name}}</td>
+        <td title="'Α.Φ.Μ'" filter2="{'user.vat': 'string'}" sortable="'user.vat'">{{row.user.vat}}</td>
+        <td title="'Ημερομηνία'" filter="{date: 'components/table-custom-filters/date.html'}" sortable="'date'">{{row.date | date: 'd/M/yyyy HH:mm:ss'}}</td>
+        <td title="'Αριθμός απόδειξης'" filter="{receiptNum: 'number'}" sortable="'receiptNum'">{{row.receiptNum}}</td>
+        <td title="'Κατάθεση'" filter="{bank: 'number'}" sortable="'bank'">{{row.bank}}</td>
+        <td title="'Μετρητά'" filter="{cash: 'number'}" sortable="'cash'">{{row.cash}}</td>
+        <td title="'Επιταγή'" filter="{check: 'number'}" sortable="'check'">{{row.check}}</td>
+        <td title="'Σχόλιο'" filter="{commend: 'text'}" sortable="'commend'">{{row.commend}}</td>
+        <td>
+          <button type="button" ng-click="allReceiptsCtrl.editReceipt(row)" class="btn btn-primary btn-sm" title="Επεξεργασία"><i class="fa fa-pencil"></i></button>
+          <button type="button" ng-click="allReceiptsCtrl.deleteReceipt(row)" class="btn btn-danger btn-sm" title="Διαγραφή"><i class="fa fa-trash-o"></i></button>
+        </td>
+      </tr>
+    </table>
+    <span ng-hide="allReceiptsCtrl.items.length">Δεν υπάρχουν καταχωρήσεις.</span>
+  </div>
+
+  </div>
+</div>

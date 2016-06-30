@@ -24,7 +24,13 @@ function gkiosaApi($q) {
     findAllProducts: createSimpleCrudFindAll('products'),
     createProduct: createSimpleCrudCreate('products'),
     updateProduct: createSimpleCrudUpdate('products'),
-    deleteProduct: createSimpleCrudDelete('products')
+    deleteProduct: createSimpleCrudDelete('products'),
+
+    findReceipt: findReceipt,
+    findAllReceipts: findAllReceipts,
+    createReceipt: createSimpleCrudCreate('receipts'),
+    updateReceipt: createSimpleCrudUpdate('receipts'),
+    deleteReceipt: createSimpleCrudDelete('receipts')
   };
 
   function getDBDriver() {
@@ -40,7 +46,7 @@ function gkiosaApi($q) {
   function createDbs() {
     const db = {};
     _.forEach(
-        ['users', 'products'],
+        ['users', 'products', 'receipts'],
         dbName => db[dbName] = new Datastore({ filename: `db/${dbName}.db`, autoload: true })
       );
     return db;
@@ -97,6 +103,37 @@ function gkiosaApi($q) {
     return (id) => deferredJob(deferred => db[dbName].remove({ _id: id }, {}, respHandle(deferred, numRemoved => numRemoved)));
   }
 
+  function findReceipt(id) {
+    return createSimpleCrudFindAll('receipts')(find, pagination, sort)
+      .then(receipt => populateItems([receipt], 'user', 'userId', 'users'))
+      .then(receipts => _.first(receipts));
+  }
+
+  function findAllReceipts(find, pagination, sort) {
+    return createSimpleCrudFindAll('receipts')(find, pagination, sort)
+      .then(receipts => {
+        populateItems(receipts.results, 'user', 'userId', 'users');
+        return receipts;
+      })
+  }
+
+  function populateItems(itemsWithUserId, targetKey, destinationKey, populatedDbName) {
+    const query = _.chain(itemsWithUserId)
+      .uniqBy(itemWithUserId => itemWithUserId[destinationKey])
+      .map(itemWithUserId => _.identity({ _id: itemWithUserId[destinationKey]}))
+      .value();
+
+    return createSimpleCrudFindAll(populatedDbName)({ $or: query })
+      .then(populatedItems => {
+        const populatedItemsById = _.groupBy(populatedItems.results, '_id');
+        _.each(
+          itemsWithUserId,
+          itemWithUserId => itemWithUserId[targetKey] = populatedItemsById[itemWithUserId[destinationKey]][0]
+        );
+        return itemsWithUserId;
+      });
+  }
+
   function insertFakeDocuments() {
     const users = _.range(100).map(idx => {
       return {
@@ -110,7 +147,22 @@ function gkiosaApi($q) {
         vector: idx%2===0?'SUPPLIERS': 'CUSTOMERS'
       };
     });
-    createSimpleCrudCreate('users')(users);
+    const promiseOfUsers = createSimpleCrudCreate('users')(users);
+    promiseOfUsers.then(users => {
+      const receipts = _.range(100).map(idx => {
+        return {
+          date: new Date(_.now() - (100000000000 + (idx * 10000000000))),
+          receiptNum: idx+100,
+          commend: `commend${idx}`,
+          bank: idx%2===0 ? idx*100 : 0,
+          cash: idx%3===0 ? idx*100 : 0,
+          check: idx%5===0 ? idx*100 : 0,
+          userId: users[idx]._id,
+          vector: idx % 2 === 0 ? 'SUPPLIERS': 'CUSTOMERS'
+        };
+      });
+      createSimpleCrudCreate('receipts')(receipts);
+    });
 
     const products = _.range(100).map(idx => {
       return {

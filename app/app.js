@@ -9,6 +9,8 @@ angular.module('gkiosa.app', [
   'gkiosa.app.sections.products',
   'gkiosa.app.sections.products.product',
   'gkiosa.app.sections.products.allProducts',
+  'gkiosa.app.sections.receipts',
+  'gkiosa.app.sections.receipts.allReceipts',
   'gkiosa.app.components.alerts',
   'gkiosa.app.components.gkiosaApi',
   'gkiosa.app.components.pagination'
@@ -55,13 +57,13 @@ function AppController($rootScope, $scope, $state) {
     },
     {
       sref: "receipts.all({vector: 'CUSTOMERS'})",
-      name: 'Απόδειξη πώλησης',
+      name: 'Αποδείξεις πώλησης',
       icon: 'fa-th-large',
       id: 'receipts.all.customers'
     },
     {
       sref: "receipts.all({vector: 'SUPPLIERS'})",
-      name: 'Απόδειξη αγοράς',
+      name: 'Αποδείξεις αγοράς',
       icon: 'fa-th-large',
       id: 'receipts.all.suppliers'
     },

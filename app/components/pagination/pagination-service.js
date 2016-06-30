@@ -27,9 +27,24 @@ function gkiosaPagination(
         const find = {vector: host.vector};
         _.transform(params.filter(), (result, value, key) => {
           if (!_.isNil(value)) {
-            result[key] = _.isString(value) ? new RegExp(value) : value
+            let normalizedVal;
+            if (_.isString(value)) {
+              normalizedVal = new RegExp(value);
+            } else if (_.isNumber(value)) {
+              normalizedVal = value;
+            } else if (_.isDate(value)) {
+              normalizedVal = {
+                $lte: new Date(value.getTime() + 24 * 60 * 60 * 1000),
+                $gte: value
+              };
+              console.log(JSON.stringify(normalizedVal));
+            } else {
+              throw new Error(`Unsupported value type: ${value}`);
+            }
+            result[key] = normalizedVal;
           }
         }, find);
+
         const pagination = {
           count: params.count(),
           page: params.page()
