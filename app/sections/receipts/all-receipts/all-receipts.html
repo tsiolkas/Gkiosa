@@ -4,21 +4,26 @@
   <div class="col-xs-12 gks-all-controllers">
     <a href="#" class="btn btn-success"
       ui-sref="receipts.receipt({receiptId: 'new', vector: allReceiptsCtrl.vector })">
-      <i class="fa fa-plus"></i> Νέο προιόν
+      <i class="fa fa-plus"></i> Νέα απόδειξη
     </a>
   </div>
 
   <div class="col-xs-12" cg-busy="allReceiptsCtrl.promise">
     <table ng-table="allReceiptsCtrl.receiptsTableParams" show-filter="true" class="table table-bordered table-striped">
-<!--       <colgroup>
-        <col width="30%" />
-        <col width="30%" />
-        <col width="30%" />
+      <colgroup>
+        <col width="15%" />
         <col width="10%" />
-      </colgroup> -->
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="15%" />
+        <col width="10%" />
+      </colgroup>
       <tr ng-repeat="row in $data track by row._id">
-        <td title="'Χρήστης'" filter2="{'user.name': 'string'}" sortable="'user.name'">{{row.user.name}}</td>
-        <td title="'Α.Φ.Μ'" filter2="{'user.vat': 'string'}" sortable="'user.vat'">{{row.user.vat}}</td>
+        <td title="'Χρήστης'">{{row.user.name}}</td>
+        <td title="'Α.Φ.Μ'">{{row.user.vat}}</td>
         <td title="'Ημερομηνία'" filter="{date: 'components/table-custom-filters/date.html'}" sortable="'date'">{{row.date | date: 'd/M/yyyy HH:mm:ss'}}</td>
         <td title="'Αριθμός απόδειξης'" filter="{receiptNum: 'number'}" sortable="'receiptNum'">{{row.receiptNum}}</td>
         <td title="'Κατάθεση'" filter="{bank: 'number'}" sortable="'bank'">{{row.bank}}</td>

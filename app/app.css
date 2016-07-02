@@ -14331,5 +14331,15 @@ table .gks-date {
 table .gks-date .gks-date-picker {
   width: 100px;
 }
+.ui-select-container {
+  width: 300px;
+}
+.ui-select-container .ui-select-toggle > .caret {
+  right: 20px;
+  margin-top: -6px;
+}
+.els-all-receipts tr {
+  cursor: pointer;
+}
 
 /*# sourceMappingURL=app.css.map */

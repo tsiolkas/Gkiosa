@@ -26,11 +26,17 @@ function gkiosaApi($q) {
     updateProduct: createSimpleCrudUpdate('products'),
     deleteProduct: createSimpleCrudDelete('products'),
 
-    findReceipt: findReceipt,
-    findAllReceipts: findAllReceipts,
+    findReceipt: createCrudFindWithUserId('receipts'),
+    findAllReceipts: createCrudFindAllWithUserId('receipts'),
     createReceipt: createSimpleCrudCreate('receipts'),
     updateReceipt: createSimpleCrudUpdate('receipts'),
-    deleteReceipt: createSimpleCrudDelete('receipts')
+    deleteReceipt: createSimpleCrudDelete('receipts'),
+
+    findInvoices: createCrudFindWithUserId('invoices'),
+    findAllInvoices: createCrudFindAllWithUserId('invoices'),
+    createInvoices: createSimpleCrudCreate('invoices'),
+    updateInvoices: createSimpleCrudUpdate('invoices'),
+    deleteInvoices: createSimpleCrudDelete('invoices')
   };
 
   function getDBDriver() {
@@ -46,7 +52,7 @@ function gkiosaApi($q) {
   function createDbs() {
     const db = {};
     _.forEach(
-        ['users', 'products', 'receipts'],
+        ['users', 'products', 'receipts', 'invoices'],
         dbName => db[dbName] = new Datastore({ filename: `db/${dbName}.db`, autoload: true })
       );
     return db;
@@ -103,18 +109,18 @@ function gkiosaApi($q) {
     return (id) => deferredJob(deferred => db[dbName].remove({ _id: id }, {}, respHandle(deferred, numRemoved => numRemoved)));
   }
 
-  function findReceipt(id) {
-    return createSimpleCrudFindAll('receipts')(find, pagination, sort)
-      .then(receipt => populateItems([receipt], 'user', 'userId', 'users'))
-      .then(receipts => _.first(receipts));
+  function createCrudFindWithUserId(dbName) {
+    return (id) => createSimpleCrudFind(dbName)(id)
+      .then(result => populateItems([result], 'user', 'userId', 'users'))
+      .then(results => _.first(results));
   }
 
-  function findAllReceipts(find, pagination, sort) {
-    return createSimpleCrudFindAll('receipts')(find, pagination, sort)
-      .then(receipts => {
-        populateItems(receipts.results, 'user', 'userId', 'users');
-        return receipts;
-      })
+  function createCrudFindAllWithUserId(dbName) {
+    return (find, pagination, sort) => createSimpleCrudFindAll(dbName)(find, pagination, sort)
+      .then(resp => {
+        populateItems(resp.results, 'user', 'userId', 'users');
+        return resp;
+      });
   }
 
   function populateItems(itemsWithUserId, targetKey, destinationKey, populatedDbName) {
@@ -172,7 +178,37 @@ function gkiosaApi($q) {
         vector: idx%2===0?'SUPPLIERS': 'CUSTOMERS'
       };
     });
-    createSimpleCrudCreate('products')(products);
+    const promiseOfProducts = createSimpleCrudCreate('products')(products);
+
+    $q.all([promiseOfUsers, promiseOfProducts])
+      .then(results => {
+        const users = results[0];
+        const products = results[1];
+        const invoices = _.range(100).map(idx => {
+          const invoicesProducts = [
+            _.assignIn({
+              price: 200*idx
+            }, products[0]),
+            _.assignIn({
+              price: 300*idx
+            }, products[1]),
+            _.assignIn({
+              price: 400*idx
+            }, products[3]),
+            _.assignIn({
+              price: 600*idx
+            }, products[4])
+          ];
+          return {
+            products: invoicesProducts,
+            date: new Date(_.now() - (100000000000 + (idx * 10000000000))),
+            commend: `commend${idx}`,
+            userId: users[idx]._id,
+            vector: idx%2===0?'SUPPLIERS': 'CUSTOMERS'
+          };
+        });
+        createSimpleCrudCreate('invoices')(invoices);
+      });
   }
 }
 

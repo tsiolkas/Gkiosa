@@ -1,8 +1,11 @@
 angular.module('gkiosa.app', [
+  'ngSanitize',
+  'ui.select',
   'ui.bootstrap',
   'ui.router',
   'ngTable',
   'cgBusy',
+  'gkiosa.app.components.filters',
   'gkiosa.app.sections.users',
   'gkiosa.app.sections.users.user',
   'gkiosa.app.sections.users.allUsers',
@@ -10,7 +13,11 @@ angular.module('gkiosa.app', [
   'gkiosa.app.sections.products.product',
   'gkiosa.app.sections.products.allProducts',
   'gkiosa.app.sections.receipts',
+  'gkiosa.app.sections.receipts.receipt',
   'gkiosa.app.sections.receipts.allReceipts',
+  'gkiosa.app.sections.invoices',
+  // 'gkiosa.app.sections.invoices.invoice',
+  'gkiosa.app.sections.invoices.allInvoices',
   'gkiosa.app.components.alerts',
   'gkiosa.app.components.gkiosaApi',
   'gkiosa.app.components.pagination'

@@ -16,6 +16,18 @@
     "path": "app/third-party-libs/angular-ui-router/release/angular-ui-router.js"
   },
   {
+    "name": "angular-ui-select",
+    "path": "app/third-party-libs/angular-ui-select/dist/select.js"
+  },
+  {
+    "name": "angular-ui-select2",
+    "path": "app/third-party-libs/select2/select2.js"
+  },
+  {
+    "name": "angular-sanitize",
+    "path": "app/third-party-libs/angular-sanitize/angular-sanitize.js"
+  },
+  {
     "name": "angular-bootstrap",
     "path": "app/third-party-libs/angular-bootstrap/ui-bootstrap.js"
   },

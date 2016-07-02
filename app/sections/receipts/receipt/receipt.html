@@ -1,0 +1,67 @@
+<div class="container" cg-busy="receiptCtrl.promiseOfReceipt">
+  <span ng-hide="receiptCtrl.receipt || receiptCtrl.isNew">
+    Δεν βρέθηκε απόδειξη
+  </span>
+  <form ng-show="receiptCtrl.receipt || receiptCtrl.isNew" role="form" class="form-horizontal">
+    <div class="form-group">
+      <label class="col-sm-1">Χρήστης</label>
+      <div class="col-sm-5">
+        <ui-select ng-model="receiptCtrl.receipt.userId" title="Διάλεξε χρήστη" append-to-body="true">
+          <ui-select-match placeholder="Χρήστης...">{{$select.selected.name}}</ui-select-match>
+          <ui-select-choices repeat="user._id as user in receiptCtrl.users | propsFilter: {name: $select.search, vat: $select.search, code: $select.search}">
+             <div ng-bind-html="''+user.name | highlight: $select.search"></div>
+            <small>
+              <span ng-bind-html="'Α.Φ.Μ: ' + user.vat | highlight: $select.search"></span>,
+              <span ng-bind-html="'Κωδικός: ' + user.code | highlight: $select.search"></span>
+            </small>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-3">
+        <label>Ημερομηνία</label>
+        <div class="gks-date clearfix">
+          <input type="text" class="pull-left gks-date-picker" uib-datepicker-popup="dd/M/yyyy" ng-model="receiptCtrl.receipt.date" close-text="Close" alt-input-formats="{{['M!/d!/yyyy']}}" is-open="$scope.popup1.opened"/>
+          <button type="button" class="pull-left gks-date-btn btn btn-sm btn-default" ng-click="$scope.popup1.opened = true">
+            <i class="glyphicon glyphicon-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <label>Αριθμός απόδειξης</label>
+        <input type="text" ng-model="receiptCtrl.receipt.receiptNum" class="form-control" placeholder="Αριθμός"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-3">
+        <label>Κατάθεση</label>
+        <input type="text" ng-model="receiptCtrl.receipt.bank" class="form-control" placeholder="Κατάθεση"/>
+      </div>
+      <div class="col-sm-3">
+        <label>Μετρητά</label>
+        <input type="text" ng-model="receiptCtrl.receipt.cash" class="form-control" placeholder="Μετρητά"/>
+      </div>
+      <div class="col-sm-3">
+        <label>Επιταγή</label>
+        <input type="text" ng-model="receiptCtrl.receipt.check" class="form-control" placeholder="Επιταγή"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-1">Σχόλιο</label>
+      <div class="col-sm-5">
+        <input type="text" ng-model="receiptCtrl.receipt.commend" class="form-control" placeholder="Σχόλιο"/>
+      </div>
+    </div>    <hr>
+    <button type="submit" ng-if="receiptCtrl.isNew" class="btn btn-success" ng-click="receiptCtrl.createReceipt(receiptCtrl.receipt)">
+      <i class="fa fa-file-o"></i> Καταχώρηση
+    </button>
+    <button type="submit" ng-if="!receiptCtrl.isNew" class="btn btn-success" ng-click="receiptCtrl.updateReceipt(receiptCtrl.receipt)">
+      <i class="fa fa-save"></i> Αποθήκευση
+    </button>
+    <button type="submit" ng-if="!receiptCtrl.isNew" class="btn btn-danger" ng-click="receiptCtrl.deleteReceipt(receiptCtrl.receipt)">
+      <i class="fa fa-trash-o"></i> Διαγραφή
+    </button>
+  </form>
+
+</div>

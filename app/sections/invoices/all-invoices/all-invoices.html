@@ -1,0 +1,53 @@
+<div>
+  <div class="row">
+
+  <div class="col-xs-12 gks-all-controllers">
+    <a href="#" class="btn btn-success"
+      ui-sref="invoices.invoice({invoiceId: 'new', vector: allInvoicesCtrl.vector })">
+      <i class="fa fa-plus"></i> Νέο τιμολόγιο
+    </a>
+  </div>
+
+  <div class="col-xs-12" cg-busy="allInvoicesCtrl.promise">
+    <table ng-table="allInvoicesCtrl.invoicesTableParams" show-filter="true" class="els-all-receipts table table-bordered table-striped table-hover">
+      <colgroup>
+        <col width="20%" />
+        <col width="20%" />
+        <col width="20%" />
+        <col width="20%" />
+        <col width="10%" />
+        <col width="10%" />
+      </colgroup>
+      <tr ng-repeat="row in $data track by row._id" ng-click="allInvoicesCtrl.expandInvoice($event, row)">
+        <td title="'Χρήστης'">{{row.user.name}}</td>
+        <td title="'Α.Φ.Μ'">{{row.user.vat}}</td>
+        <td title="'Ημερομηνία'" filter="{date: 'components/table-custom-filters/date.html'}" sortable="'date'">{{row.date | date: 'd/M/yyyy HH:mm:ss'}}</td>
+        <td title="'Σχόλιο'" filter="{commend: 'text'}" sortable="'commend'">{{row.commend}}</td>
+        <td title="'Προιόντα'">{{row.products.length}}</td>
+        <td>
+          <button type="button" ng-click="allInvoicesCtrl.editInvoice(row)" class="btn btn-primary btn-sm" title="Επεξεργασία"><i class="fa fa-pencil"></i></button>
+          <button type="button" ng-click="allInvoicesCtrl.deleteInvoice(row)" class="btn btn-danger btn-sm" title="Διαγραφή"><i class="fa fa-trash-o"></i></button>
+        </td>
+      </tr>
+      <tr style="display: none;" class="gks-expanded-invoice well">
+        <td  colspan="100">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th ng-repeat="productKey in allInvoicesCtrl.getInvoiceProductKeys(allInvoicesCtrl.expandedInvoice.products)">{{productKey}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="product in allInvoicesCtrl.expandedInvoice.products">
+                <td ng-repeat="(value, name) in product">{{name}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <span ng-hide="allInvoicesCtrl.items.length">Δεν υπάρχουν καταχωρήσεις.</span>
+  </div>
+
+  </div>
+</div>

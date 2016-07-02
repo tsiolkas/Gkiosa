@@ -27,6 +27,8 @@
     "load-awesome": "^1.1.0",
     "bootstrap": "~3.2.0",
     "nedb": "^1.6.0",
-    "ng-table": "^1.0.0"
+    "ng-table": "^1.0.0",
+    "angular-ui-select": "^0.18.0",
+    "angular-sanitize": "^1.5.7"
   }
 }

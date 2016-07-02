@@ -14,5 +14,13 @@
   {
     "name": "agnular-table",
     "path": "app/third-party-libs/ng-table/dist/ng-table.css"
+  },
+  {
+    "name": "angular-ui-select",
+    "path": "app/third-party-libs/angular-ui-select/dist/select.css"
+  },
+  {
+    "name": "angular-ui-select2",
+    "path": "app/third-party-libs/select2/select2.css"
   }
 ]
