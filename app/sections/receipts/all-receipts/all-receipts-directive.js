@@ -24,7 +24,7 @@ function AllReceiptsController(
   }
 
   function editReceipt(receipt) {
-    $state.go('receipts.receipt', {receiptId: receipt._id, vector: self.vector, name: receipt.name });
+    $state.go('receipts.receipt', {receiptId: receipt._id, vector: self.vector, name: receipt.receiptNum });
   }
 }
 

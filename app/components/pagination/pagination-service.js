@@ -14,8 +14,20 @@ function gkiosaPagination(
 ) {
 
   return {
-    createNgTableParams
+    createNgTableParams,
+    createStaticNgTableParams
   };
+
+  function createStaticNgTableParams(dataset) {
+    const tableParams = {
+      count: 7 // count per page
+    };
+    const tableSettings = {
+      dataset,
+      filterDelay: 0
+    };
+    return new NgTableParams(tableParams, tableSettings);
+  }
 
   // host {vector, items, promise}
   function createNgTableParams(host, targetDb, sortingKey) {
@@ -27,21 +39,7 @@ function gkiosaPagination(
         const find = {vector: host.vector};
         _.transform(params.filter(), (result, value, key) => {
           if (!_.isNil(value)) {
-            let normalizedVal;
-            if (_.isString(value)) {
-              normalizedVal = new RegExp(value);
-            } else if (_.isNumber(value)) {
-              normalizedVal = value;
-            } else if (_.isDate(value)) {
-              normalizedVal = {
-                $lte: new Date(value.getTime() + 24 * 60 * 60 * 1000),
-                $gte: value
-              };
-              console.log(JSON.stringify(normalizedVal));
-            } else {
-              throw new Error(`Unsupported value type: ${value}`);
-            }
-            result[key] = normalizedVal;
+            result[key] = valueToFilter(value);
           }
         }, find);
 
@@ -61,6 +59,21 @@ function gkiosaPagination(
       }
     };
     return new NgTableParams(tableParams, tableSettings);
+  }
+
+  function valueToFilter(value) {
+    if (_.isString(value)) {
+      return new RegExp(value);
+    } else if (_.isNumber(value) || _.isBoolean(value)) {
+      return value;
+    } else if (_.isDate(value)) {
+      return {
+        $lte: new Date(value.getTime() + 24 * 60 * 60 * 1000),
+        $gte: value
+      };
+    } else {
+      throw new Error(`Unsupported value type: ${value}`);
+    }
   }
 
   function urlToTableParams(sortingKey) {

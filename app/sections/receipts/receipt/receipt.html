@@ -7,7 +7,10 @@
       <label class="col-sm-1">Χρήστης</label>
       <div class="col-sm-5">
         <ui-select ng-model="receiptCtrl.receipt.userId" title="Διάλεξε χρήστη" append-to-body="true">
-          <ui-select-match placeholder="Χρήστης...">{{$select.selected.name}}</ui-select-match>
+          <ui-select-match placeholder="Χρήστης...">
+            <span ng-show="$select.selected.name">{{$select.selected.name}}, Α.Φ.Μ: {{$select.selected.vat}}</span>
+            <span ng-hide="$select.selected.name"><i class="fa fa-warning"></i> Ο χρήστης έχει διαγραφεί</span>
+          </ui-select-match>
           <ui-select-choices repeat="user._id as user in receiptCtrl.users | propsFilter: {name: $select.search, vat: $select.search, code: $select.search}">
              <div ng-bind-html="''+user.name | highlight: $select.search"></div>
             <small>
@@ -34,25 +37,26 @@
       </div>
     </div>
     <div class="form-group">
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         <label>Κατάθεση</label>
-        <input type="text" ng-model="receiptCtrl.receipt.bank" class="form-control" placeholder="Κατάθεση"/>
+        <input type="number" ng-model="receiptCtrl.receipt.bank" class="form-control" placeholder="Κατάθεση"/>
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         <label>Μετρητά</label>
-        <input type="text" ng-model="receiptCtrl.receipt.cash" class="form-control" placeholder="Μετρητά"/>
+        <input type="number" ng-model="receiptCtrl.receipt.cash" class="form-control" placeholder="Μετρητά"/>
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         <label>Επιταγή</label>
-        <input type="text" ng-model="receiptCtrl.receipt.check" class="form-control" placeholder="Επιταγή"/>
+        <input type="number" ng-model="receiptCtrl.receipt.check" class="form-control" placeholder="Επιταγή"/>
       </div>
     </div>
     <div class="form-group">
       <label class="col-sm-1">Σχόλιο</label>
       <div class="col-sm-5">
-        <input type="text" ng-model="receiptCtrl.receipt.commend" class="form-control" placeholder="Σχόλιο"/>
+        <textarea type="text" ng-model="receiptCtrl.receipt.commend" class="form-control" placeholder="Σχόλιο"></textarea>
       </div>
-    </div>    <hr>
+    </div>
+    <hr>
     <button type="submit" ng-if="receiptCtrl.isNew" class="btn btn-success" ng-click="receiptCtrl.createReceipt(receiptCtrl.receipt)">
       <i class="fa fa-file-o"></i> Καταχώρηση
     </button>

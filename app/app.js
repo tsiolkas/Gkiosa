@@ -16,7 +16,7 @@ angular.module('gkiosa.app', [
   'gkiosa.app.sections.receipts.receipt',
   'gkiosa.app.sections.receipts.allReceipts',
   'gkiosa.app.sections.invoices',
-  // 'gkiosa.app.sections.invoices.invoice',
+  'gkiosa.app.sections.invoices.invoice',
   'gkiosa.app.sections.invoices.allInvoices',
   'gkiosa.app.components.alerts',
   'gkiosa.app.components.gkiosaApi',
@@ -32,6 +32,15 @@ angular.module('gkiosa.app', [
 
 .config($urlRouterProvider => {
   $urlRouterProvider.otherwise('/users');
+})
+
+.run(NgTableParams => {
+  NgTableParams.prototype.customFilters = {
+    boolean: (filters, key) => {
+      const val = filters[key];
+      filters[key] = val === undefined ? true : undefined;
+    }
+  };
 });
 
 function AppController($rootScope, $scope, $state) {
@@ -94,7 +103,7 @@ function AppController($rootScope, $scope, $state) {
   $rootScope.$on("$stateChangeStart", onStateChangeStart);
 
   function sidebarMenuClicked() {
-    _.defer(() => $state.reload());
+    _.delay(() => $state.reload(), 200);
   }
 
   function onStateChangeStart(event, toState, toParams, fromState, fromParams) {

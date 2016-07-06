@@ -17,17 +17,17 @@ function AllInvoicesController(
 
   self.vector = $stateParams.vector;
   self.invoicesTableParams = gkiosaPagination.createNgTableParams(self, 'Invoices', 'name');
-  self.deleteInvoices = deleteInvoices;
-  self.editInvoices = editInvoices;
+  self.deleteInvoice = deleteInvoice;
+  self.editInvoice = editInvoice;
   self.expandInvoice = expandInvoice;
   self.getInvoiceProductKeys = getInvoiceProductKeys;
 
-  function deleteInvoices(invoice) {
-    self.promise = gkiosaApiUtilities.deleteInvoices(invoice).then(() => _.defer(() => $state.reload()));
+  function deleteInvoice(invoice) {
+    self.promise = gkiosaApiUtilities.deleteInvoice(invoice).then(() => _.defer(() => $state.reload()));
   }
 
-  function editInvoices(invoice) {
-    $state.go('invoices.invoice', {invoicesId: invoice._id, vector: self.vector, name: invoice.name });
+  function editInvoice(invoice) {
+    $state.go('invoices.invoice', {invoiceId: invoice._id, vector: self.vector, name: ''+invoice.invoiceNum });
   }
 
   function getInvoiceProductKeys(products) {
@@ -44,6 +44,8 @@ function AllInvoicesController(
     }
     self.expandedInvoice = invoice;
     expandedInvoiceEl.insertAfter(rowEl);
+
+    self.invoiceProductsTableParams = gkiosaPagination.createStaticNgTableParams(invoice.products);
   }
 }
 

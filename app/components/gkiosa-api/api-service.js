@@ -14,10 +14,12 @@ function gkiosaApi($q) {
   // insertFakeDocuments();
 
   return {
+    getUserDependencies,
+
     findUser: createSimpleCrudFind('users'),
     findAllUsers: createSimpleCrudFindAll('users'),
     createUser: createSimpleCrudCreate('users'),
-    updateUser: createSimpleCrudUpdate('users'),
+    updateUser,
     deleteUser: createSimpleCrudDelete('users'),
 
     findProduct: createSimpleCrudFind('products'),
@@ -26,17 +28,17 @@ function gkiosaApi($q) {
     updateProduct: createSimpleCrudUpdate('products'),
     deleteProduct: createSimpleCrudDelete('products'),
 
-    findReceipt: createCrudFindWithUserId('receipts'),
-    findAllReceipts: createCrudFindAllWithUserId('receipts'),
-    createReceipt: createSimpleCrudCreate('receipts'),
-    updateReceipt: createSimpleCrudUpdate('receipts'),
+    findReceipt: createSimpleCrudFind('receipts'),
+    findAllReceipts: createSimpleCrudFindAll('receipts'),
+    createReceipt: createCrudCreateWithUserId('receipts'),
+    updateReceipt: createCrudUpdateWithUserId('receipts'),
     deleteReceipt: createSimpleCrudDelete('receipts'),
 
-    findInvoices: createCrudFindWithUserId('invoices'),
-    findAllInvoices: createCrudFindAllWithUserId('invoices'),
-    createInvoices: createSimpleCrudCreate('invoices'),
-    updateInvoices: createSimpleCrudUpdate('invoices'),
-    deleteInvoices: createSimpleCrudDelete('invoices')
+    findInvoice: createSimpleCrudFind('invoices'),
+    findAllInvoices: createSimpleCrudFindAll('invoices'),
+    createInvoice: createCrudCreateWithUserId('invoices'),
+    updateInvoice: createCrudUpdateWithUserId('invoices'),
+    deleteInvoice: createSimpleCrudDelete('invoices'),
   };
 
   function getDBDriver() {
@@ -109,18 +111,39 @@ function gkiosaApi($q) {
     return (id) => deferredJob(deferred => db[dbName].remove({ _id: id }, {}, respHandle(deferred, numRemoved => numRemoved)));
   }
 
-  function createCrudFindWithUserId(dbName) {
-    return (id) => createSimpleCrudFind(dbName)(id)
-      .then(result => populateItems([result], 'user', 'userId', 'users'))
-      .then(results => _.first(results));
+  function updateUser(user) {
+    const userId = user._id;
+    return deferredJob(deferred => db['invoices'].update({ userId }, { user }, {}, respHandle(deferred, record => record)))
+      .then(deferredJob(deferred => db['receipts'].update({ userId }, { user }, {}, respHandle(deferred, record => record))))
+      .then(createSimpleCrudUpdate('users')(userId, user))
   }
 
-  function createCrudFindAllWithUserId(dbName) {
-    return (find, pagination, sort) => createSimpleCrudFindAll(dbName)(find, pagination, sort)
-      .then(resp => {
-        populateItems(resp.results, 'user', 'userId', 'users');
-        return resp;
-      });
+  function getUserDependencies(userId) {
+    return $q.all([
+      createSimpleCrudFindAll('invoices')({ userId }),
+      createSimpleCrudFindAll('receipts')({ userId })
+    ])
+    .then(results => {
+      if (_.isEmpty(results[0].results) && _.isEmpty(results[1].results)) {
+        return;
+      }
+      return {
+        invoices: results[0].results,
+        receipts: results[1].results
+      };
+    });
+  }
+
+  function createCrudCreateWithUserId(dbName) {
+    return (record) => populateItems([record], 'user', 'userId', 'users')
+      .then(results => _.first(results))
+      .then(record => createSimpleCrudCreate(dbName)(record));
+  }
+
+  function createCrudUpdateWithUserId(dbName) {
+    return (record) => populateItems([record], 'user', 'userId', 'users')
+      .then(results => _.first(results))
+      .then(record => createSimpleCrudUpdate(dbName)(record._id, record));
   }
 
   function populateItems(itemsWithUserId, targetKey, destinationKey, populatedDbName) {
@@ -155,8 +178,8 @@ function gkiosaApi($q) {
     });
     const promiseOfUsers = createSimpleCrudCreate('users')(users);
     promiseOfUsers.then(users => {
-      const receipts = _.range(100).map(idx => {
-        return {
+      _.range(100).forEach(idx => {
+        const receipt =  {
           date: new Date(_.now() - (100000000000 + (idx * 10000000000))),
           receiptNum: idx+100,
           commend: `commend${idx}`,
@@ -166,8 +189,9 @@ function gkiosaApi($q) {
           userId: users[idx]._id,
           vector: idx % 2 === 0 ? 'SUPPLIERS': 'CUSTOMERS'
         };
+        createCrudCreateWithUserId('receipts')(receipt);
       });
-      createSimpleCrudCreate('receipts')(receipts);
+
     });
 
     const products = _.range(100).map(idx => {
@@ -184,30 +208,35 @@ function gkiosaApi($q) {
       .then(results => {
         const users = results[0];
         const products = results[1];
-        const invoices = _.range(100).map(idx => {
+        _.range(100).forEach(idx => {
           const invoicesProducts = [
             _.assignIn({
-              price: 200*idx
+              price: 200*idx,
+              quantity: 4+idx
             }, products[0]),
             _.assignIn({
-              price: 300*idx
+              price: 300*idx,
+              quantity: 5+idx
             }, products[1]),
             _.assignIn({
-              price: 400*idx
+              price: 400*idx,
+              quantity: 6+idx
             }, products[3]),
             _.assignIn({
-              price: 600*idx
+              price: 600*idx,
+              quantity: 7+idx
             }, products[4])
           ];
-          return {
+          const invoice =  {
             products: invoicesProducts,
             date: new Date(_.now() - (100000000000 + (idx * 10000000000))),
-            commend: `commend${idx}`,
             userId: users[idx]._id,
+            credit: idx%2===0,
+            invoiceNum: idx*100,
             vector: idx%2===0?'SUPPLIERS': 'CUSTOMERS'
           };
+          createCrudCreateWithUserId('invoices')(invoice);
         });
-        createSimpleCrudCreate('invoices')(invoices);
       });
   }
 }

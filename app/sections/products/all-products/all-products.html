@@ -19,7 +19,7 @@
       <tr ng-repeat="row in $data track by row._id">
         <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">{{row.name}}</td>
         <td title="'Αναγνωριστικό'" filter="{productId: 'text'}" sortable="'productId'">{{row.productId}}</td>
-        <td title="'Φ.Π.Α'" filter="{vat: 'number'}" sortable="'vat'">{{row.vat}}%</td>
+        <td title="'Φ.Π.Α.'" filter="{vat: 'number'}" sortable="'vat'">{{row.vat}}%</td>
         <td>
           <button type="button" ng-click="allProductsCtrl.editProduct(row)" class="btn btn-primary btn-sm" title="Επεξεργασία"><i class="fa fa-pencil"></i></button>
           <button type="button" ng-click="allProductsCtrl.deleteProduct(row)" class="btn btn-danger btn-sm" title="Διαγραφή"><i class="fa fa-trash-o"></i></button>

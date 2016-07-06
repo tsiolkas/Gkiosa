@@ -14338,8 +14338,35 @@ table .gks-date .gks-date-picker {
   right: 20px;
   margin-top: -6px;
 }
+.ui-select-container .ui-select-search {
+  max-width: 300px;
+}
+.ui-select-container .ui-select-choices {
+  margin-top: 2px;
+}
 .els-all-receipts tr {
   cursor: pointer;
+}
+.gks-table-custom-filter-boolean > * {
+  display: inline-block;
+}
+.gks-table-custom-filter-boolean label {
+  margin-left: 7px;
+}
+.gks-table-custom-filter-boolean input {
+  width: 18px;
+  height: 18px;
+  vertical-align: text-bottom;
+}
+table.gks-invoice-products td input {
+  width: 100%;
+}
+.gks-invoices-add-product label {
+  vertical-align: bottom;
+}
+.gks-invoices-add-product .ui-select-container {
+  display: inline-block;
+  margin-left: 5px;
 }
 
 /*# sourceMappingURL=app.css.map */
