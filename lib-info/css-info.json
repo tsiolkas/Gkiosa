@@ -22,5 +22,9 @@
   {
     "name": "angular-ui-select2",
     "path": "app/third-party-libs/select2/select2.css"
+  },
+  {
+    "name": "angular-toastr",
+    "path": "app/third-party-libs/angular-toastr/dist/angular-toastr.css"
   }
 ]

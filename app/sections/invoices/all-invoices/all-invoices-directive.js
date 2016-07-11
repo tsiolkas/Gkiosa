@@ -7,9 +7,11 @@ angular.module('gkiosa.app.sections.invoices')
 .controller('AllInvoicesController', AllInvoicesController);
 
 function AllInvoicesController(
+  $scope,
   $element,
   $state,
   $stateParams,
+  gkiosaApi,
   gkiosaApiUtilities,
   gkiosaPagination
 ) {
@@ -21,6 +23,14 @@ function AllInvoicesController(
   self.editInvoice = editInvoice;
   self.expandInvoice = expandInvoice;
   self.getInvoiceProductKeys = getInvoiceProductKeys;
+
+  init();
+
+  function init() {
+    gkiosaApi.findAllUsers().then(resp => {
+      return $scope.allUsers = resp.results;
+    });
+  }
 
   function deleteInvoice(invoice) {
     self.promise = gkiosaApiUtilities.deleteInvoice(invoice).then(() => _.defer(() => $state.reload()));

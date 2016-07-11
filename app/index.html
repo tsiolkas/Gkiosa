@@ -10,6 +10,7 @@
       <link rel="stylesheet" href="third-party-libs/ng-table/dist/ng-table.css"/>
       <link rel="stylesheet" href="third-party-libs/angular-ui-select/dist/select.css"/>
       <link rel="stylesheet" href="third-party-libs/select2/select2.css"/>
+      <link rel="stylesheet" href="third-party-libs/angular-toastr/dist/angular-toastr.css"/>
     <link rel="stylesheet" href="app.css"/>
 
   </head>
@@ -29,7 +30,7 @@
           ng-click="appCtrl.sidebarMenuClicked()">
           <a ui-sref="{{menu.sref}}">
             <i class="fa {{menu.icon}}"></i>
-            <span>{{menu.name}}</span>
+            <span ng-bind="menu.name"></span>
           </a>
         </li>
       </ul>
@@ -48,8 +49,8 @@
             </button>
             <span class="seperator">|</span>
             <li ng-repeat="crumb in appCtrl.breadcrumb" ng-class="{active: $last}">
-              <a ng-if="!$last" ui-sref="{{crumb.sref}}">{{crumb.name}}</a>
-              <span ng-if="$last">{{crumb.name}}</span>
+              <a ng-if="!$last" ui-sref="{{crumb.sref}}" ng-bind="crumb.name"></a>
+              <span ng-if="$last" ng-bind="crumb.name"></span>
             </li>
           </ol>
           <gkiosa-alerts></gkiosa-alerts>
@@ -77,12 +78,17 @@
     <script src="third-party-libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="third-party-libs/angular-busy/angular-busy.js"></script>
     <script src="third-party-libs/ng-table/dist/ng-table.js"></script>
+    <script src="third-party-libs/angular-toastr/dist/angular-toastr.js"></script>
+    <script src="third-party-libs/angular-toastr/dist/angular-toastr.tpls.js"></script>
+    <script src="third-party-libs/angular-animate/angular-animate.js"></script>
+    <script src="third-party-libs/highcharts/highstock.js"></script>
     <script src="third-party-libs/nedb/browser-version/out/nedb.js"></script>
     <script src="app.js"></script>
-    <script src="components/alerts/alerts.js"></script>
+    <script src="components/charts/charts.js"></script>
     <script src="components/filters/filters.js"></script>
     <script src="components/gkiosa-api/gkiosa-api.js"></script>
     <script src="components/pagination/pagination.js"></script>
+    <script src="sections/dashboard/dashboard.js"></script>
     <script src="sections/invoices/all-invoices/all-invoices.js"></script>
     <script src="sections/invoices/invoice/invoice.js"></script>
     <script src="sections/invoices/invoices.js"></script>
@@ -95,11 +101,12 @@
     <script src="sections/users/all-users/all-users.js"></script>
     <script src="sections/users/user/user.js"></script>
     <script src="sections/users/users.js"></script>
-    <script src="components/alerts/alerts-directive.js"></script>
+    <script src="components/charts/charts-service.js"></script>
     <script src="components/filters/filters-filter.js"></script>
     <script src="components/gkiosa-api/api-service.js"></script>
     <script src="components/gkiosa-api/api-utilities-service.js"></script>
     <script src="components/pagination/pagination-service.js"></script>
+    <script src="sections/dashboard/dashboard-directive.js"></script>
     <script src="sections/invoices/all-invoices/all-invoices-directive.js"></script>
     <script src="sections/invoices/invoice/invoice-controller.js"></script>
     <script src="sections/products/all-products/all-products-controller.js"></script>

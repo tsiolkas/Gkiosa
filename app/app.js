@@ -1,11 +1,13 @@
 angular.module('gkiosa.app', [
+  'ngAnimate',
+  'toastr',
   'ngSanitize',
   'ui.select',
   'ui.bootstrap',
   'ui.router',
   'ngTable',
   'cgBusy',
-  'gkiosa.app.components.filters',
+  'gkiosa.app.sections.dashboard',
   'gkiosa.app.sections.users',
   'gkiosa.app.sections.users.user',
   'gkiosa.app.sections.users.allUsers',
@@ -18,9 +20,10 @@ angular.module('gkiosa.app', [
   'gkiosa.app.sections.invoices',
   'gkiosa.app.sections.invoices.invoice',
   'gkiosa.app.sections.invoices.allInvoices',
-  'gkiosa.app.components.alerts',
+  'gkiosa.app.components.filters',
   'gkiosa.app.components.gkiosaApi',
-  'gkiosa.app.components.pagination'
+  'gkiosa.app.components.pagination',
+  'gkiosa.app.components.charts'
 ])
 
 .value('cgBusyDefaults', {
@@ -31,7 +34,25 @@ angular.module('gkiosa.app', [
 .controller('AppController', AppController)
 
 .config($urlRouterProvider => {
-  $urlRouterProvider.otherwise('/users');
+  $urlRouterProvider.otherwise('/');
+})
+
+.config(toastrConfig => {
+  toastrConfig.autoDismiss = false;
+  toastrConfig.closeButton = true;
+  toastrConfig.closeHtml = "<button>&times;</button>";
+  toastrConfig.customTemplate = false;
+  toastrConfig.extendedTimeOut = "5000";
+  toastrConfig.html = true;
+  toastrConfig.allowHtml = true;
+  toastrConfig.maxOpened = 0;
+  toastrConfig.newestOnTop = true;
+  toastrConfig.position = "toast-top-right";
+  toastrConfig.preventDuplicates = false;
+  toastrConfig.preventOpenDuplicates = false;
+  toastrConfig.progressBar = true;
+  toastrConfig.tapToDismiss = true;
+  toastrConfig.timeOut = "5000";
 })
 
 .run(NgTableParams => {
@@ -41,12 +62,23 @@ angular.module('gkiosa.app', [
       filters[key] = val === undefined ? true : undefined;
     }
   };
+})
+
+.value('gkiosaConfig', {
+  technicalContact: 'john.apostolidi@gmail.com',
+  technicalName: 'Γιάννης Αποστολίδης'
 });
 
 function AppController($rootScope, $scope, $state) {
   const self = this;
 
   self.sidebarMenu = [
+    {
+      sref: "dashboard",
+      name: 'Πίνακας ελέγχου',
+      icon: 'fa-th-large',
+      id: 'dashboard'
+    },
     {
       sref: "users.all({vector: 'CUSTOMERS'})",
       name: 'Πελάτες',

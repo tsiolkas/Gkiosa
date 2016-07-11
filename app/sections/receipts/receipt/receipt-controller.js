@@ -6,7 +6,7 @@ angular.module('gkiosa.app.sections.receipts.receipt')
 
 .controller('ReceiptController', ReceiptController);
 
-function ReceiptController($rootScope, $state, $stateParams, gkiosaApi, gkiosaApiUtilities) {
+function ReceiptController($rootScope, $state, $stateParams, toastr, gkiosaApi, gkiosaApiUtilities) {
   const self = this;
 
   self.vector = $stateParams.vector;
@@ -22,6 +22,8 @@ function ReceiptController($rootScope, $state, $stateParams, gkiosaApi, gkiosaAp
   function init() {
     if (self.receiptId) {
       findReceipt(self.receiptId);
+    } else {
+      self.receipt = gkiosaApiUtilities.createEmptyReceipt();
     }
     gkiosaApi.findAllUsers()
       .then(resp => {
@@ -38,11 +40,7 @@ function ReceiptController($rootScope, $state, $stateParams, gkiosaApi, gkiosaAp
     self.promiseOfreceipt = gkiosaApi.createReceipt(receipt).then(
       receipt => {
         $state.go('receipts.receipt', {receiptId: receipt._id, vector: self.vector, name: receipt.name });
-        $rootScope.$emit('gkiosa.app.components.alerts', {
-          type: 'success',
-          msg: `Η απόδειξη ${receipt.receiptNum} δημιουργήθηκε`,
-          timeout: 5000
-        });
+        toastr.success(`Η απόδειξη ${receipt.receiptNum} δημιουργήθηκε`);
       }
     );
   }
@@ -51,11 +49,7 @@ function ReceiptController($rootScope, $state, $stateParams, gkiosaApi, gkiosaAp
     self.promiseOfreceipt = gkiosaApi.updateReceipt(receipt._id, receipt).then(
       () => {
         $state.go('receipts.receipt', {receiptId: receipt._id, vector: self.vector, name: receipt.name });
-        $rootScope.$emit('gkiosa.app.components.alerts', {
-          type: 'success',
-          msg: `Η απόδειξη ${receipt.receiptNum} αποθηκεύτηκε`,
-          timeout: 5000
-        });
+        toastr.success(`Η απόδειξη ${receipt.receiptNum} αποθηκεύτηκε`);
       }
     );
   }

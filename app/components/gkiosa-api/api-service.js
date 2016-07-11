@@ -6,7 +6,7 @@ angular.module('gkiosa.app.components.gkiosaApi')
 
 .factory('gkiosaApi', gkiosaApi);
 
-function gkiosaApi($q) {
+function gkiosaApi($q, toastr, gkiosaConfig) {
 
   const Datastore = getDBDriver();
   const db = createDbs();
@@ -67,7 +67,33 @@ function gkiosaApi($q) {
   }
 
   function respHandle(deferred, successCb) {
-    return (err, resp) => err ? deferred.reject(err) : deferred.resolve(successCb ? successCb(resp) : resp);
+    return (err, resp) => {
+      if (err) {
+        const subject = encodeURI('Gkiosa unexpected error');
+        let body = err.stack || JSON.stringify(err);
+        body = _.isEmpty(body) ? err + '' : body;
+        const mailto = `mailto:${gkiosaConfig.technicalContact}?Subject=${subject}&Body=${encodeURI(body)}`;
+        const msg = `
+          <span>
+            Επικοινωνήστε με τον τεχνικό υπεύθυνο
+            <a href="${mailto}" target="_blank" class="gks-toastr-link">${gkiosaConfig.technicalName}</a>
+          </span>
+          <br>
+          <div class="gks-toastr-code"><code>${body}</code></div>
+        `;
+        const title = '<h4>Προέκυψε πρόβλημα κατα την επικοινωνία με την βάση</h4>';
+        const toastrOpts = {
+          timeOut: 0,
+          closeButton: false,
+          extendedTimeOut: 0,
+          tapToDismiss: false
+        };
+        toastr.error(msg, title, toastrOpts);
+        return  deferred.reject(err);
+      } else {
+        return deferred.resolve(successCb ? successCb(resp) : resp);
+      }
+    }
   }
 
   function createSimpleCrudFind(dbName) {
@@ -141,9 +167,9 @@ function gkiosaApi($q) {
   }
 
   function createCrudUpdateWithUserId(dbName) {
-    return (record) => populateItems([record], 'user', 'userId', 'users')
+    return (id, record) => populateItems([record], 'user', 'userId', 'users')
       .then(results => _.first(results))
-      .then(record => createSimpleCrudUpdate(dbName)(record._id, record));
+      .then(record => createSimpleCrudUpdate(dbName)(id, record));
   }
 
   function populateItems(itemsWithUserId, targetKey, destinationKey, populatedDbName) {

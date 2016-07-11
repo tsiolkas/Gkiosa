@@ -44,6 +44,22 @@
     "path": "app/third-party-libs/ng-table/dist/ng-table.js"
   },
   {
+    "name": "angular-toastr",
+    "path": "app/third-party-libs/angular-toastr/dist/angular-toastr.js"
+  },
+  {
+    "name": "angular-toastr-tpls",
+    "path": "app/third-party-libs/angular-toastr/dist/angular-toastr.tpls.js"
+  },
+  {
+    "name": "angular-animate",
+    "path": "app/third-party-libs/angular-animate/angular-animate.js"
+  },
+  {
+    "name": "highcharts",
+    "path": "app/third-party-libs/highcharts/highstock.js"
+  },
+  {
     "name": "nedb",
     "path": "app/third-party-libs/nedb/browser-version/out/nedb.js"
   }

@@ -6,28 +6,36 @@ angular.module('gkiosa.app.sections.invoices.invoice')
 
 .controller('InvoiceController', InvoiceController);
 
-function InvoiceController($rootScope, $scope, $state, $stateParams, gkiosaPagination, gkiosaApi, gkiosaApiUtilities) {
+function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gkiosaPagination, gkiosaApi, gkiosaApiUtilities) {
   const self = this;
 
   let editedProductId;
-  self.vector = $stateParams.vector;
-  self.isNew = $stateParams.invoiceId === 'new';
-  self.invoiceId = self.isNew ? undefined : $stateParams.invoiceId;
-  self.newProduct = undefined;
-  self.invoiceProductsTableParams = undefined;
+  _.assignIn(self, {
+    vector: $stateParams.vector,
+    isNew: $stateParams.invoiceId === 'new',
+    invoiceId: $stateParams.invoiceId === 'new' ? undefined : $stateParams.invoiceId,
+    newProduct: undefined,
+    invoiceProductsTableParams: undefined,
+    invoice: undefined,
 
-  self.createInvoice = createInvoice;
-  self.updateInvoice = updateInvoice;
-  self.deleteInvoice = deleteInvoice;
-  self.deleteProduct = deleteProduct;
-  self.editProduct = editProduct;
-  self.isProductEdited = isProductEdited;
+    createInvoice,
+    updateInvoice,
+    deleteInvoice,
+    deleteProduct,
+    editProduct,
+    isProductEdited,
+    isItemInvalid,
+    isProductInvalid
+  });
 
   init();
 
   function init() {
     if (self.invoiceId) {
       findInvoice(self.invoiceId)
+    } else {
+      self.invoice = gkiosaApiUtilities.createEmptyInvoice();
+      self.invoiceProductsTableParams = gkiosaPagination.createStaticNgTableParams(self.invoice.products);
     }
     gkiosaApi.findAllUsers().then(resp => {
       return self.users = resp.results;
@@ -50,29 +58,21 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, gkiosaPagin
 
   function createInvoice(invoice) {
     invoice.vector = self.vector;
-    self.promiseOfinvoice = gkiosaApi.createInvoice(invoice).then(
+    const clearedInvoice = getClearProductsHashkey(invoice);
+    self.promiseOfinvoice = gkiosaApi.createInvoice(clearedInvoice).then(
       invoice => {
         $state.go('invoices.invoice', {invoiceId: invoice._id, vector: self.vector, name: invoice.name });
-        $rootScope.$emit('gkiosa.app.components.alerts', {
-          type: 'success',
-          msg: `Η απόδειξη ${invoice.invoiceNum} δημιουργήθηκε`,
-          timeout: 5000
-        });
+        toastr.success(`Η απόδειξη ${invoice.invoiceNum} δημιουργήθηκε`);
       }
     );
   }
 
   function updateInvoice(invoice) {
-    // exclude angular's $$hashKey
-    const clearedInvoice = angular.fromJson(angular.toJson(invoice));
+    const clearedInvoice = getClearProductsHashkey(invoice);
     self.promiseOfinvoice = gkiosaApi.updateInvoice(clearedInvoice._id, clearedInvoice)
       .then(() => {
         $state.go('invoices.invoice', {invoiceId: clearedInvoice._id, vector: self.vector, name: clearedInvoice.name });
-        $rootScope.$emit('gkiosa.app.components.alerts', {
-          type: 'success',
-          msg: `Η απόδειξη ${clearedInvoice.invoiceNum} αποθηκεύτηκε`,
-          timeout: 5000
-        });
+        toastr.success(`Η απόδειξη ${clearedInvoice.invoiceNum} αποθηκεύτηκε`);
       });
   }
 
@@ -102,6 +102,14 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, gkiosaPagin
     return editedProductId === product._id;
   }
 
+  function isProductInvalid(product) {
+    return _.some(product, _.isNil);
+  }
+
+  function isItemInvalid() {
+    return $scope.formItem.$invalid || _.some(self.invoice.products, isProductInvalid)
+  }
+
   function addNewProduct(product) {
     const products = self.invoice.products || [];
     const newProduct = {
@@ -113,6 +121,15 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, gkiosaPagin
     self.invoice.products = products;
     self.invoiceProductsTableParams.reload();
     _.defer(() => editProduct(newProduct));
+  }
+
+  // exclude angular's $$hashKey
+  function getClearProductsHashkey(invoice) {
+    const clearedInvoice = _.assignIn({}, invoice);
+    clearedInvoice.products = _.each(clearedInvoice.products, product => {
+      delete product.$$hashKey;
+    });
+    return clearedInvoice;
   }
 }
 

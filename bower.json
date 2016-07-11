@@ -29,6 +29,9 @@
     "nedb": "^1.6.0",
     "ng-table": "^1.0.0",
     "angular-ui-select": "^0.18.0",
-    "angular-sanitize": "^1.5.7"
+    "angular-sanitize": "^1.5.7",
+    "angular-toastr": "^1.7.0",
+    "angular-animate": "^1.5.7",
+    "highcharts": "^4.2.5"
   }
 }

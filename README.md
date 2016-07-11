@@ -20,4 +20,4 @@ Currentrly, the text content is in *Greek*, there is no support for other langua
 
 ### Database
 
-We αdopt `nedb` as the database of the application because it is lightweight and it can directly run the database server from the application's context.
+We adopt `nedb` as the database of the application because it is lightweight and it can directly run the database server from the application's context.

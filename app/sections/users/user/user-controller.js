@@ -6,7 +6,7 @@ angular.module('gkiosa.app.sections.users')
 
 .controller('UserController', UserController);
 
-function UserController($rootScope, $state, $stateParams, gkiosaApi, gkiosaApiUtilities) {
+function UserController($rootScope, $state, $stateParams, toastr, gkiosaApi, gkiosaApiUtilities) {
   const self = this;
 
   self.vector = $stateParams.vector;
@@ -34,11 +34,7 @@ function UserController($rootScope, $state, $stateParams, gkiosaApi, gkiosaApiUt
     self.promiseOfUser = gkiosaApi.createUser(user).then(
       user => {
         $state.go('users.user', {userId: user._id, vector: self.vector, name: user.name });
-        $rootScope.$emit('gkiosa.app.components.alerts', {
-          type: 'success',
-          msg: `Ο χρήστης ${user.name} δημιουργήθηκε`,
-          timeout: 5000
-        });
+        toastr.success(`Ο χρήστης ${user.name} δημιουργήθηκε`);
       }
     );
   }
@@ -47,11 +43,7 @@ function UserController($rootScope, $state, $stateParams, gkiosaApi, gkiosaApiUt
     self.promiseOfUser = gkiosaApi.updateUser(user._id, user).then(
       () => {
         $state.go('users.user', {userId: user._id, vector: self.vector, name: user.name });
-        $rootScope.$emit('gkiosa.app.components.alerts', {
-          type: 'success',
-          msg: `Ο χρήστης ${user.name} αποθηκεύτηκε`,
-          timeout: 5000
-        });
+        toastr.success(`ΟΟ χρήστης ${user.name} αποθηκεύτηκε`);
       }
     );
   }

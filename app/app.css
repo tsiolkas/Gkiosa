@@ -14344,9 +14344,6 @@ table .gks-date .gks-date-picker {
 .ui-select-container .ui-select-choices {
   margin-top: 2px;
 }
-.els-all-receipts tr {
-  cursor: pointer;
-}
 .gks-table-custom-filter-boolean > * {
   display: inline-block;
 }
@@ -14367,6 +14364,23 @@ table.gks-invoice-products td input {
 .gks-invoices-add-product .ui-select-container {
   display: inline-block;
   margin-left: 5px;
+}
+.gks-toastr-link {
+  text-decoration: underline;
+  font-size: 14px;
+  color: #180076;
+  font-weight: bold;
+}
+.gks-toastr-code {
+  margin-top: 8px;
+}
+input.ng-invalid.ng-touched {
+  border-color: #a94442;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.gks-invalid-notify {
+  font-size: 20px;
 }
 
 /*# sourceMappingURL=app.css.map */

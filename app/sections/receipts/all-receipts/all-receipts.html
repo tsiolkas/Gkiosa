@@ -15,17 +15,17 @@
         <col width="10%" />
         <col width="10%" />
         <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
+        <col width="5%" />
+        <col width="5%" />
+        <col width="5%" />
         <col width="15%" />
         <col width="10%" />
       </colgroup>
       <tr ng-repeat="row in $data track by row._id">
-        <td title="'Χρήστης'" filter="{'user.name': 'text'}" sortable="'user.name'">{{row.user.name}}</td>
+        <td title="'Χρήστης'" filter="{'userId': 'components/table-custom-filters/select-user.html'}" sortable="'user.name'">{{row.user.name}}</td>
         <td title="'Α.Φ.Μ'" filter="{'user.vat': 'text'}" sortable="'user.vat'">{{row.user.vat}}</td>
         <td title="'Ημερομηνία'" filter="{date: 'components/table-custom-filters/date.html'}" sortable="'date'">{{row.date | date: 'd/M/yyyy HH:mm:ss'}}</td>
-        <td title="'Αριθμός απόδειξης'" filter="{receiptNum: 'number'}" sortable="'receiptNum'">{{row.receiptNum}}</td>
+        <td title="'Αριθμός απόδειξης'" filter="{receiptNum: 'text'}" sortable="'receiptNum'">{{row.receiptNum}}</td>
         <td title="'Κατάθεση'" filter="{bank: 'number'}" sortable="'bank'">{{row.bank}}</td>
         <td title="'Μετρητά'" filter="{cash: 'number'}" sortable="'cash'">{{row.cash}}</td>
         <td title="'Επιταγή'" filter="{check: 'number'}" sortable="'check'">{{row.check}}</td>

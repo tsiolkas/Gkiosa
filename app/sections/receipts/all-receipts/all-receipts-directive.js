@@ -7,8 +7,10 @@ angular.module('gkiosa.app.sections.receipts')
 .controller('AllReceiptsController', AllReceiptsController);
 
 function AllReceiptsController(
+  $scope,
   $state,
   $stateParams,
+  gkiosaApi,
   gkiosaApiUtilities,
   gkiosaPagination
 ) {
@@ -18,6 +20,14 @@ function AllReceiptsController(
   self.receiptsTableParams = gkiosaPagination.createNgTableParams(self, 'Receipts', 'name');
   self.deleteReceipt = deleteReceipt;
   self.editReceipt = editReceipt;
+
+  init();
+
+  function init() {
+    gkiosaApi.findAllUsers().then(resp => {
+      return $scope.allUsers = resp.results;
+    });
+  }
 
   function deleteReceipt(receipt) {
     self.promise = gkiosaApiUtilities.deleteReceipt(receipt).then(() => _.defer(() => $state.reload()));

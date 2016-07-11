@@ -6,7 +6,7 @@ angular.module('gkiosa.app.sections.products.product')
 
 .controller('ProductController', ProductController);
 
-function ProductController($rootScope, $state, $stateParams, gkiosaApi, gkiosaApiUtilities) {
+function ProductController($rootScope, $state, $stateParams, toastr, gkiosaApi, gkiosaApiUtilities) {
   const self = this;
 
   self.vector = $stateParams.vector;
@@ -22,6 +22,8 @@ function ProductController($rootScope, $state, $stateParams, gkiosaApi, gkiosaAp
   function init() {
     if (self.productId) {
       findProduct(self.productId);
+    } else {
+      self.product = gkiosaApiUtilities.createEmptyProduct();
     }
   }
 
@@ -34,11 +36,7 @@ function ProductController($rootScope, $state, $stateParams, gkiosaApi, gkiosaAp
     self.promiseOfproduct = gkiosaApi.createProduct(product).then(
       product => {
         $state.go('products.product', {productId: product._id, vector: self.vector, name: product.name });
-        $rootScope.$emit('gkiosa.app.components.alerts', {
-          type: 'success',
-          msg: `Το προιόν ${product.name} δημιουργήθηκε`,
-          timeout: 5000
-        });
+        toastr.success(`Το προιόν ${product.name} δημιουργήθηκε`);
       }
     );
   }
@@ -47,11 +45,7 @@ function ProductController($rootScope, $state, $stateParams, gkiosaApi, gkiosaAp
     self.promiseOfproduct = gkiosaApi.updateProduct(product._id, product).then(
       () => {
         $state.go('products.product', {productId: product._id, vector: self.vector, name: product.name });
-        $rootScope.$emit('gkiosa.app.components.alerts', {
-          type: 'success',
-          msg: `Το προιόν ${product.name} αποθηκεύτηκε`,
-          timeout: 5000
-        });
+        toastr.success(`Το προιόν ${product.name} αποθηκεύτηκε`);
       }
     );
   }

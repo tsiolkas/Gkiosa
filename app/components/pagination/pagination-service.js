@@ -38,7 +38,7 @@ function gkiosaPagination(
         addTableParamsToUrl(params.parameters());
         const find = {vector: host.vector};
         _.transform(params.filter(), (result, value, key) => {
-          if (!_.isNil(value)) {
+          if (!(_.isNil(value) || (_.isString(value) && !value))) {
             result[key] = valueToFilter(value);
           }
         }, find);

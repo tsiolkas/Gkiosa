@@ -2,7 +2,7 @@
   <span ng-hide="invoiceCtrl.invoice || invoiceCtrl.isNew">
     Δεν βρέθηκε τιμολόγιο
   </span>
-  <form ng-show="invoiceCtrl.invoice || invoiceCtrl.isNew" role="form" class="form-horizontal">
+  <form ng-show="invoiceCtrl.invoice || invoiceCtrl.isNew" role="form" class="form-horizontal" name="formItem">
     <div class="row">
       <div class="col-md-4">
         <div class="form-group">
@@ -11,7 +11,7 @@
             <ui-select ng-model="invoiceCtrl.invoice.userId" title="Διάλεξε χρήστη" append-to-body="true">
               <ui-select-match placeholder="Χρήστης...">
                 <span ng-show="$select.selected.name">{{$select.selected.name}}, Α.Φ.Μ: {{$select.selected.vat}}</span>
-                <span ng-hide="$select.selected.name"><i class="fa fa-warning"></i> Ο χρήστης έχει διαγραφεί</span>
+                <span ng-hide="invoiceCtrl.isNew || $select.selected.name"><i class="fa fa-warning"></i> Ο χρήστης έχει διαγραφεί</span>
               </ui-select-match>
               <ui-select-choices repeat="user._id as user in invoiceCtrl.users | propsFilter: {name: $select.search, vat: $select.search, code: $select.search}">
                  <div ng-bind-html="''+user.name | highlight: $select.search"></div>
@@ -27,7 +27,7 @@
           <div class="col-sm-11">
             <label>Ημερομηνία</label>
             <div class="gks-date clearfix">
-              <input type="text" class="pull-left gks-date-picker" uib-datepicker-popup="dd/M/yyyy" ng-model="invoiceCtrl.invoice.date" close-text="Close" alt-input-formats="{{['M!/d!/yyyy']}}" is-open="$scope.popup1.opened"/>
+              <input type="text" class="pull-left gks-date-picker" uib-datepicker-popup="dd/M/yyyy" ng-model="invoiceCtrl.invoice.date" close-text="Close" alt-input-formats="{{['M!/d!/yyyy']}}" is-open="$scope.popup1.opened" required/>
               <button type="button" class="pull-left gks-date-btn btn btn-sm btn-default" ng-click="$scope.popup1.opened = true">
                 <i class="glyphicon glyphicon-calendar"></i>
               </button>
@@ -37,7 +37,7 @@
         <div class="form-group">
           <div class="col-sm-11">
             <label>Τιμολόγιο</label>
-            <input type="text" ng-model="invoiceCtrl.invoice.invoiceNum" class="form-control" placeholder="Τιμολόγιο"/>
+            <input type="text" ng-model="invoiceCtrl.invoice.invoiceNum" class="form-control" placeholder="Τιμολόγιο" required/>
           </div>
         </div>
         <div class="form-group">
@@ -62,26 +62,26 @@
           <tr ng-repeat="prRow in $data">
             <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.name}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.name">
+              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.name" class="form-control" required>
             </td>
             <td title="'Αναγνωριστικό'" filter="{productId: 'text'}" sortable="'productId'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.productId}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.productId">
+              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.productId" class="form-control" required>
             </td>
             <td title="'Φ.Π.Α.'" filter="{vat: 'number'}" sortable="'vat'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.vat}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="number" ng-model="prRow.vat">
+              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.vat" class="form-control" required>
             </td>
             <td title="'Τιμή'" filter="{price: 'number'}" sortable="'price'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.price}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="number" ng-model="prRow.price">
+              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="number" min="0" ng-model="prRow.price" class="form-control" required>
             </td>
             <td title="'Ποσότητα'" filter="{quantity: 'number'}" sortable="'quantity'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.quantity}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="number" ng-model="prRow.quantity">
+              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="number" min="0" ng-model="prRow.quantity" class="form-control" required>
             </td>
             <td>
-              <button type="button" ng-click="invoiceCtrl.editProduct(prRow)" class="btn btn-primary btn-sm" title="Επεξεργασία">
+              <button type="button" ng-click="invoiceCtrl.editProduct(prRow)" class="btn btn-primary btn-sm" title="Επεξεργασία" ng-disabled="invoiceCtrl.isProductInvalid(prRow)">
                 <i class="fa" ng-class="{
                   'fa-pencil': !invoiceCtrl.isProductEdited(prRow),
                   'fa-check': invoiceCtrl.isProductEdited(prRow)
@@ -110,10 +110,11 @@
     </div> <!-- row -->
 
     <hr>
-    <button type="submit" ng-if="invoiceCtrl.isNew" class="btn btn-success" ng-click="invoiceCtrl.createInvoice(invoiceCtrl.invoice)">
+    <span class="glyphicon glyphicon-info-sign gks-invalid-notify" uib-tooltip="Η φόρμα δεν είναι συμπληρωμένη σωστά" ng-show="invoiceCtrl.isItemInvalid()" tooltip-append-to-body="true"></span>
+    <button type="submit" ng-if="invoiceCtrl.isNew" class="btn btn-success" ng-click="invoiceCtrl.createInvoice(invoiceCtrl.invoice)" ng-disabled="invoiceCtrl.isItemInvalid()">
       <i class="fa fa-file-o"></i> Καταχώρηση
     </button>
-    <button type="submit" ng-if="!invoiceCtrl.isNew" class="btn btn-success" ng-click="invoiceCtrl.updateInvoice(invoiceCtrl.invoice)">
+    <button type="submit" ng-if="!invoiceCtrl.isNew" class="btn btn-success" ng-click="invoiceCtrl.updateInvoice(invoiceCtrl.invoice)" ng-disabled="invoiceCtrl.isItemInvalid()">
       <i class="fa fa-save"></i> Αποθήκευση
     </button>
     <button type="submit" ng-if="!invoiceCtrl.isNew" class="btn btn-danger" ng-click="invoiceCtrl.deleteInvoice(invoiceCtrl.invoice)">

@@ -1,0 +1,198 @@
+<div cg-busy="dashboardCtrl.receiptSummariesPrms">
+
+  <div class="row">
+    <div class="panel panel-gray">
+      <div class="panel-heading">
+        <h4>Αποδείξεις πώλησης</h4>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="info-tiles tiles-success col-lg-4">
+            <div class="tiles-heading">Τραπεζικά</div>
+            <div class="tiles-body">
+              <div class="text-center">
+                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.receiptSummaries.CUSTOMERS.bank}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-tiles tiles-success col-lg-4">
+            <div class="tiles-heading">Μετρητά</div>
+            <div class="tiles-body">
+              <div class="text-center">
+                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.receiptSummaries.CUSTOMERS.cash}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-tiles tiles-success col-lg-4">
+            <div class="tiles-heading">Επιταγή</div>
+            <div class="tiles-body">
+              <div class="text-center">
+                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.receiptSummaries.CUSTOMERS.check}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="panel panel-gray">
+      <div class="panel-heading">
+        <h4>Αποδείξεις αγοράς</h4>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="info-tiles tiles-midnightblue col-lg-4">
+            <div class="tiles-heading">Τραπεζικά</div>
+            <div class="tiles-body">
+              <div class="text-center">
+                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.receiptSummaries.SUPPLIERS.bank}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-tiles tiles-midnightblue col-lg-4">
+            <div class="tiles-heading">Μετρητά</div>
+            <div class="tiles-body">
+              <div class="text-center">
+                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.receiptSummaries.SUPPLIERS.cash}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-tiles tiles-midnightblue col-lg-4">
+            <div class="tiles-heading">Επιταγή</div>
+            <div class="tiles-body">
+              <div class="text-center">
+                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.receiptSummaries.SUPPLIERS.check}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-sm-6">
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Αποδείξεις αγοράς</h4>
+        </div>
+        <div class="panel-body">
+          <div class="gks-stockChart-receipt-suppliers"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Αποδείξεις πώλησης</h4>
+        </div>
+        <div class="panel-body">
+          <div class="gks-stockChart-receipt-customers"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="panel panel-gray">
+      <div class="panel-heading">
+        <h4>Τιμολόγια</h4>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="info-tiles tiles-success col-sm-6">
+            <div class="tiles-heading">πώλησης</div>
+            <div class="tiles-body">
+              <div class="text-center">
+                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.invoiceSummaries.CUSTOMERS}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-tiles tiles-midnightblue col-sm-6">
+            <div class="tiles-heading">αγοράς</div>
+            <div class="tiles-body">
+              <div class="text-center">
+                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.invoiceSummaries.SUPPLIERS}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Τιμολόγια αγοράς</h4>
+        </div>
+        <div class="panel-body">
+          <div class="gks-stockChart-invoice-suppliers"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Τιμολόγια πώλησης</h4>
+        </div>
+        <div class="panel-body">
+          <div class="gks-stockChart-invoice-customers"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-sm-6">
+
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Τιμολόγια αν χρήστη</h4>
+        </div>
+        <div class="panel-body">
+          <table ng-table="dashboardCtrl.invoiceSummariesFromAllUsersTable" show-filter="true" class="table table-bordered table-striped table-hover">
+            <colgroup>
+              <col width="23%" />
+
+            </colgroup>
+            <tr ng-repeat="row in $data">
+              <td title="'Όνομα'" filter="{'user.name': 'text'}" sortable="'user.name'">
+                <a href="#" class="" ui-sref="users.user({userId: row.user._id, vector: row.user.vector })">
+                  {{row.user.name}}
+                </a>
+              </td>
+              <td title="'Α.Φ.Μ.'" filter="{'user.vat': 'text'}" sortable="'user.vat'">{{row.user.vat}}</td>
+              <td title="'Αγορά'" filter="{'summaries.SUPPLIERS': 'number'}" sortable="'summaries.SUPPLIERS'">{{row.summaries.SUPPLIERS}}</td>
+              <td title="'Πώληση'" filter="{'summaries.CUSTOMERS': 'number'}" sortable="'summaries.CUSTOMERS'">{{row.summaries.CUSTOMERS}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <hr>
+  <code>
+  {{dashboardCtrl.receiptSummariesFromAllUsers}}
+  </code>
+
+</div>
