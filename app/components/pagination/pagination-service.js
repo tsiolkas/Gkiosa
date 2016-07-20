@@ -24,7 +24,9 @@ function gkiosaPagination(
     };
     const tableSettings = {
       dataset,
-      filterDelay: 0
+      filterDelay: 0,
+      paginationMaxBlocks: 3,
+      paginationMinBlocks: 2,
     };
     return new NgTableParams(tableParams, tableSettings);
   }

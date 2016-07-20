@@ -34,36 +34,32 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
     ));
   }
 
-  function calculateStatistics(users, receipts, invoices) {
-    const receiptSummaries = getReceiptSummaries(receipts);
-    const invoiceSummaries = getInvoiceSummaries(invoices);
-    const invoiceSummariesFromAllUsers = getInvoiceSummariesFromAllUsers();
-    const receiptSummariesFromAllUsers = getReceiptSummariesFromAllUsers();
-    const invoiceHistorical = getInvoiceHistorical();
-    const receiptHistorical = getReceiptHistorical();
-
+  function calculateStatistics(allUsers, allReceipts, allInvoices) {
     return {
-      receiptSummaries,
-      invoiceSummaries,
-      invoiceSummariesFromAllUsers,
-      receiptSummariesFromAllUsers,
-      invoiceHistorical,
-      receiptHistorical
+      getReceiptSummaries,
+      getInvoiceSummaries,
+      getCustomersFromAllUsers: genVectorFromAllUsers('CUSTOMERS'),
+      getSuppliersFromAllUsers: genVectorFromAllUsers('SUPPLIERS'),
+      getInvoiceHistorical,
+      getReceiptHistorical
     };
 
-    function getInvoiceSummariesFromUser(userId) {
-      const userInvoices = _.filter(invoices, invoice => invoice.userId === userId);
-      return getInvoiceSummaries(userInvoices);
+    function getInvoiceSummariesFromUser(userId, vector, dateRange) {
+      const filteredInvoices = filterByDate(allInvoices, dateRange);
+      const userInvoices = _.filter(filteredInvoices, invoice => invoice.userId === userId && (!vector || invoice.vector === vector));
+      return _.isEmpty(userInvoices) ? undefined : getInvoiceSummaries(userInvoices, dateRange);
     }
 
-    function getReceiptSummariesFromUser(userId) {
-      const userReceipts = _.filter(receipts, receipt => receipt.userId === userId);
-      return getReceiptSummaries(userReceipts);
+    function getReceiptSummariesFromUser(userId, vector, dateRange) {
+      const filteredReceipts = filterByDate(allReceipts, dateRange);
+      const userReceipts = _.filter(filteredReceipts, receipt => receipt.userId === userId && (!vector || invoice.vector === vector));
+      return  _.isEmpty(userReceipts) ? undefined : getReceiptSummaries(userReceipts, dateRange);
     }
 
-    function getReceiptSummaries(receipts) {
-      return _.transform(
-        receipts,
+    function getReceiptSummaries(receipts, dateRange) {
+      const filteredReceipts = filterByDate(receipts || allReceipts, dateRange);
+      const summaries = _.transform(
+        filteredReceipts,
         (summaries, receipt) => {
           summaries[receipt.vector].bank += receipt.bank;
           summaries[receipt.vector].cash += receipt.cash;
@@ -82,17 +78,30 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
           }
         }
       );
+      summaries.BALANCE = {
+        bank: summaries.SUPPLIERS.bank + summaries.CUSTOMERS.bank,
+        cash: summaries.SUPPLIERS.cash + summaries.CUSTOMERS.cash,
+        check: summaries.SUPPLIERS.check + summaries.CUSTOMERS.check
+      }
+      summaries.TOTAL = {
+        SUPPLIERS: summaries.SUPPLIERS.bank + summaries.SUPPLIERS.cash + summaries.SUPPLIERS.check,
+        CUSTOMERS: summaries.CUSTOMERS.bank + summaries.CUSTOMERS.cash + summaries.CUSTOMERS.check
+      }
+      return summaries;
     }
 
-    function getInvoiceSummaries(invoices) {
-      return _.transform(
-        invoices,
+    function getInvoiceSummaries(invoices, dateRange) {
+      const filteredInvoices = filterByDate(invoices || allInvoices, dateRange);
+      const summaries = _.transform(
+        filteredInvoices,
         (summaries, invoice) => summaries[invoice.vector] += getInvoiceProductsPrice(invoice),
         {
           SUPPLIERS: 0,
           CUSTOMERS: 0
         }
       );
+      summaries.BALANCE = summaries.SUPPLIERS + SUPPLIERS.CUSTOMERS;
+      return summaries;
     }
 
     function getInvoiceProductsPrice(invoice) {
@@ -103,37 +112,37 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
       );
     }
 
-    function getInvoiceSummariesFromAllUsers() {
-      return _.map(users, user => _.identity({
-        user,
-        summaries: getInvoiceSummariesFromUser(user._id)
-      }));
-    }
-
-    function getReceiptSummariesFromAllUsers() {
-      return _.map(users, user => _.identity({
-        user,
-        summaries: getReceiptSummariesFromUser(user._id)
-      }));
+    function genVectorFromAllUsers(vector) {
+      return (dateRange) => _.transform(
+          allUsers,
+          (summaries, user) => {
+            const invoices = getInvoiceSummariesFromUser(user._id, vector, dateRange);
+            const receipts = getReceiptSummariesFromUser(user._id, vector, dateRange);
+            if(!_.isEmpty(invoices) || !_.isEmpty(receipts)) {
+              const total = receipts.TOTAL[vector] + invoices[vector];
+              summaries.push({ invoices, receipts, total, user });
+            }
+          },
+          []
+        );
     }
 
     function getInvoiceHistorical() {
       const historicals = _.transform(
-        invoices,
+        allInvoices,
         (summaries, invoice) => summaries[invoice.vector].push([invoice.date.getTime(), getInvoiceProductsPrice(invoice)]),
         {
           SUPPLIERS: [],
           CUSTOMERS: []
         }
       );
-      _(_.keys(historicals)).each(vector =>
-        historicals[vector] = _.sortBy(historicals[vector], invoice => invoice[0]));
+      _(historicals).each((vectorVal, vector) => historicals[vector] = _.sortBy(vectorVal, _.first));
       return historicals;
     }
 
     function getReceiptHistorical() {
       const historicals = _.transform(
-        receipts,
+        allReceipts,
         (summaries, receipt) => {
           summaries[receipt.vector].bank.push([receipt.date.getTime(), receipt.bank]);
           summaries[receipt.vector].cash.push([receipt.date.getTime(), receipt.cash]);
@@ -152,11 +161,18 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
           }
         }
       );
-      _(_.keys(historicals)).each(vector =>
-        _(_.keys(historicals[vector])).each(kind =>
-          historicals[vector][kind] = _.sortBy(historicals[vector][kind], item => item[0]))
+      _(historicals).each((vectorVal, vector) =>
+        _(vectorVal).each((kindVal, kind) => historicals[vector][kind] = _.sortBy(kindVal, _.first))
       );
+
       return historicals;
+    }
+
+    function filterByDate(items, dateRange) {
+      return _.filter(items, item => {
+        const itemDate = item.date.getTime();
+        return itemDate >= dateRange[0] && itemDate <= dateRange[1];
+      });
     }
   }
 

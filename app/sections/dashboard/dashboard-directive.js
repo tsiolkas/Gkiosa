@@ -9,19 +9,28 @@ angular.module('gkiosa.app.sections.dashboard')
 function DashboardController($element, gkiosaPagination, gkiosaApiUtilities, gkiosaCharts) {
   const self = this;
 
+  const dto = (new Date).getTime();
+  const dfrom = dto - (1000 * 60 * 60 * 24 * 30 * 3);
+  const dateRange = [dfrom, dto];
+
+  self.receiptSummariesDate = dateRange;
+  self.invoiceSummariesDate = dateRange;
+  self.invoiceSummariesFromAllUsersDate = dateRange;
+  self.receiptSummariesFromAllUsersDate = dateRange;
+
   init();
 
   function init() {
     self.receiptSummariesPrms = gkiosaApiUtilities.getStatistics()
       .then(statistics => {
-        self.receiptSummaries = statistics.receiptSummaries;
-        self.invoiceSummaries = statistics.invoiceSummaries;
-        self.invoiceSummariesFromAllUsers = statistics.invoiceSummariesFromAllUsers;
-        self.receiptSummariesFromAllUsers = statistics.receiptSummariesFromAllUsers;
-        self.invoiceHistorical = statistics.invoiceHistorical;
-        self.receiptHistorical = statistics.receiptHistorical;
+        self.receiptSummaries = statistics.getReceiptSummaries(undefined, self.receiptSummariesDate);
+        self.invoiceSummaries = statistics.getInvoiceSummaries(undefined, self.invoiceSummariesDate);
+        self.customersFromAllUsers = statistics.getCustomersFromAllUsers(self.invoiceSummariesFromAllUsersDate);
+        self.suppliersFromAllUsers = statistics.getSuppliersFromAllUsers(self.receiptSummariesFromAllUsersDate);
+        self.invoiceHistorical = statistics.getInvoiceHistorical();
+        self.receiptHistorical = statistics.getReceiptHistorical();
 
-        self.invoiceSummariesFromAllUsersTable = gkiosaPagination.createStaticNgTableParams(statistics.invoiceSummariesFromAllUsers);
+        self.invoiceSummariesFromAllUsersTable = gkiosaPagination.createStaticNgTableParams(self.invoiceSummariesFromAllUsers);
 
         const nameMaping = {
           bank: 'Τραπεζικά',

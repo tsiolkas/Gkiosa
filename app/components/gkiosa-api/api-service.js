@@ -206,12 +206,12 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
     promiseOfUsers.then(users => {
       _.range(100).forEach(idx => {
         const receipt =  {
-          date: new Date(_.now() - (100000000000 + (idx * 10000000000))),
-          receiptNum: idx+100,
+          date: new Date(_.now() - (1000 * 60 * 60 * 24 * idx)),
+          receiptNum: `rec${idx*100}`,
           commend: `commend${idx}`,
-          bank: idx%2===0 ? idx*100 : 0,
-          cash: idx%3===0 ? idx*100 : 0,
-          check: idx%5===0 ? idx*100 : 0,
+          bank: idx%7===0 ? 0 : idx*100,
+          cash: idx%13===0 ? 0 : idx*100,
+          check: idx%17===0 ?  0: idx*100,
           userId: users[idx]._id,
           vector: idx % 2 === 0 ? 'SUPPLIERS': 'CUSTOMERS'
         };
@@ -255,10 +255,10 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
           ];
           const invoice =  {
             products: invoicesProducts,
-            date: new Date(_.now() - (100000000000 + (idx * 10000000000))),
+            date: new Date(_.now() - (1000 * 60 * 60 * 24 * idx)),
             userId: users[idx]._id,
-            credit: idx%2===0,
-            invoiceNum: idx*100,
+            credit: idx%3===0,
+            invoiceNum: `inv${idx*100}`,
             vector: idx%2===0?'SUPPLIERS': 'CUSTOMERS'
           };
           createCrudCreateWithUserId('invoices')(invoice);
