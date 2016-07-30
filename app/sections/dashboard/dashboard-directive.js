@@ -6,17 +6,17 @@ angular.module('gkiosa.app.sections.dashboard')
 
 .controller('DashboardController', DashboardController);
 
-function DashboardController($element, gkiosaPagination, gkiosaApiUtilities, gkiosaCharts) {
+function DashboardController($scope, $element, gkiosaPagination, gkiosaApiUtilities, gkiosaCharts) {
   const self = this;
 
   const dto = (new Date).getTime();
   const dfrom = dto - (1000 * 60 * 60 * 24 * 30 * 3);
   const dateRange = [dfrom, dto];
 
-  self.receiptSummariesDate = dateRange;
-  self.invoiceSummariesDate = dateRange;
-  self.invoiceSummariesFromAllUsersDate = dateRange;
-  self.receiptSummariesFromAllUsersDate = dateRange;
+  self.receiptSummariesDate = undefined;
+  self.invoiceSummariesDate = undefined;
+  self.customersFromAllUsersDate = undefined;
+  self.suppliersFromAllUsersDate = undefined;
   self.hasInitialized = false;
 
   self.activateChart = activateChart;
@@ -26,15 +26,43 @@ function DashboardController($element, gkiosaPagination, gkiosaApiUtilities, gki
   function init() {
     self.receiptSummariesPrms = gkiosaApiUtilities.getStatistics()
       .then(statistics => {
-        self.receiptSummaries = statistics.getReceiptSummaries(undefined, self.receiptSummariesDate);
-        self.invoiceSummaries = statistics.getInvoiceSummaries(undefined, self.invoiceSummariesDate);
-        self.customersFromAllUsers = statistics.getCustomersFromAllUsers(self.invoiceSummariesFromAllUsersDate);
-        self.suppliersFromAllUsers = statistics.getSuppliersFromAllUsers(self.receiptSummariesFromAllUsersDate);
+        $scope.$watchCollection(
+          () => self.receiptSummariesDate,
+          (val) => {
+            self.receiptSummaries = statistics.getReceiptSummaries(undefined, val);
+          }
+        );
+
+        $scope.$watchCollection(
+          () => self.invoiceSummariesDate,
+          (val) => {
+            self.invoiceSummaries = statistics.getInvoiceSummaries(undefined, val);
+          }
+        );
+
+        $scope.$watchCollection(
+          () => self.customersFromAllUsersDate,
+          (val) => {
+            const customersFromAllUsers = statistics.getCustomersFromAllUsers(val);
+            self.customersFromAllUsersTable = gkiosaPagination.createStaticNgTableParams(customersFromAllUsers);
+          }
+        );
+
+        $scope.$watchCollection(
+          () => self.suppliersFromAllUsersDate,
+          (val) => {
+            const suppliersFromAllUsers = statistics.getSuppliersFromAllUsers(val);
+            self.suppliersFromAllUsersTable = gkiosaPagination.createStaticNgTableParams(suppliersFromAllUsers);
+          }
+        );
+
+        self.receiptSummariesDate = _.clone(dateRange);
+        self.invoiceSummariesDate = _.clone(dateRange);
+        self.customersFromAllUsersDate = _.clone(dateRange);
+        self.suppliersFromAllUsersDate = _.clone(dateRange);
+
         self.invoiceHistorical = statistics.getInvoiceHistorical();
         self.receiptHistorical = statistics.getReceiptHistorical();
-
-        self.customersFromAllUsersTable = gkiosaPagination.createStaticNgTableParams(self.customersFromAllUsers);
-        self.suppliersFromAllUsersTable = gkiosaPagination.createStaticNgTableParams(self.suppliersFromAllUsers);
 
         const nameMaping = {
           bank: 'Τραπεζικά',

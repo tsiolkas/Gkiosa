@@ -32,6 +32,8 @@
     "angular-sanitize": "^1.5.7",
     "angular-toastr": "^1.7.0",
     "angular-animate": "^1.5.7",
-    "highcharts": "^4.2.5"
+    "highcharts": "^4.2.5",
+    "moment": "^2.14.1",
+    "bootstrap-daterangepicker": "^2.1.24"
   }
 }

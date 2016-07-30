@@ -8,6 +8,10 @@
     "path": "app/third-party-libs/jquery/dist/jquery.js"
   },
   {
+    "name": "moment",
+    "path": "app/third-party-libs/moment/moment.js"
+  },
+  {
     "name": "angular",
     "path": "app/third-party-libs/angular/angular.js"
   },
@@ -54,6 +58,10 @@
   {
     "name": "angular-animate",
     "path": "app/third-party-libs/angular-animate/angular-animate.js"
+  },
+  {
+    "name": "bootstrap-daterangepicker",
+    "path": "app/third-party-libs/bootstrap-daterangepicker/daterangepicker.js"
   },
   {
     "name": "highcharts",

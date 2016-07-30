@@ -23,7 +23,8 @@ angular.module('gkiosa.app', [
   'gkiosa.app.components.filters',
   'gkiosa.app.components.gkiosaApi',
   'gkiosa.app.components.pagination',
-  'gkiosa.app.components.charts'
+  'gkiosa.app.components.charts',
+  'gkiosa.app.components.dateRangePicker'
 ])
 
 .value('cgBusyDefaults', {

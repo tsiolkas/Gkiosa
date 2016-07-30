@@ -14382,5 +14382,12 @@ input.ng-invalid.ng-touched {
 .gks-invalid-notify {
   font-size: 20px;
 }
+gks-date-range-picker {
+  display: block;
+  width: 260px;
+}
+.margin-bottom-default {
+  margin-bottom: 10px;
+}
 
 /*# sourceMappingURL=app.css.map */

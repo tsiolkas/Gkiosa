@@ -120,7 +120,9 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
             const invoices = getInvoiceSummariesFromUser(user._id, vector, dateRange);
             const receipts = getReceiptSummariesFromUser(user._id, vector, dateRange);
             if(!_.isEmpty(invoices) || !_.isEmpty(receipts)) {
-              const total = receipts.TOTAL[vector] + invoices[vector];
+              const rval = receipts ? receipts.TOTAL[vector] : 0;
+              const ival = invoices ? invoices[vector] : 0;
+              const total =rval + ival;
               summaries.push({ invoices, receipts, total, user });
             }
           },

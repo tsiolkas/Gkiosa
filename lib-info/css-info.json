@@ -26,5 +26,9 @@
   {
     "name": "angular-toastr",
     "path": "app/third-party-libs/angular-toastr/dist/angular-toastr.css"
+  },
+  {
+    "name": "bootstrap-daterangepicker",
+    "path": "app/third-party-libs/bootstrap-daterangepicker/daterangepicker.css"
   }
 ]
