@@ -27,6 +27,7 @@ function gkiosaPagination(
       filterDelay: 0,
       paginationMaxBlocks: 3,
       paginationMinBlocks: 2,
+      showFilter: false
     };
     return new NgTableParams(tableParams, tableSettings);
   }

@@ -9,7 +9,7 @@
   </div>
 
   <div class="col-xs-12" cg-busy="allReceiptsCtrl.promise">
-    <table ng-table="allReceiptsCtrl.receiptsTableParams" show-filter="true" class="table table-bordered table-striped">
+    <table ng-show="allReceiptsCtrl.receiptsTableParams.total()" ng-table="allReceiptsCtrl.receiptsTableParams" show-filter="true" class="table table-bordered table-striped">
       <colgroup>
         <col width="15%" />
         <col width="10%" />

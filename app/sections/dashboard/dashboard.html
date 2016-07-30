@@ -8,6 +8,7 @@
           <h4>Αποδείξεις</h4>
         </div>
         <div class="panel-body">
+          <gks-date-range-picker range="dashboardCtrl.receiptSummariesDate" class="pull-right margin-bottom-default"></gks-date-range-picker>
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -44,7 +45,6 @@
               </tr>
             </tbody>
           </table>
-          <gks-date-range-picker range="dashboardCtrl.receiptSummariesDate" class="pull-right"></gks-date-range-picker>
         </div>
       </div>
     </div>
@@ -55,6 +55,7 @@
           <h4>Τιμολόγια</h4>
         </div>
         <div class="panel-body">
+          <gks-date-range-picker range="dashboardCtrl.invoiceSummariesDate" class="pull-right margin-bottom-default"></gks-date-range-picker>
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -71,7 +72,6 @@
               </tr>
             </tbody>
           </table>
-          <gks-date-range-picker range="dashboardCtrl.invoiceSummariesDate" class="pull-right"></gks-date-range-picker>
         </div>
       </div>
     </div>
@@ -126,7 +126,7 @@
         </div>
         <div class="panel-body">
           <gks-date-range-picker range="dashboardCtrl.customersFromAllUsersDate" class="pull-right margin-bottom-default"></gks-date-range-picker>
-          <table ng-table="dashboardCtrl.customersFromAllUsersTable" show-filter="true" class="table table-bordered table-striped table-hover">
+          <table ng-show="dashboardCtrl.customersFromAllUsersTable.total()" ng-table="dashboardCtrl.customersFromAllUsersTable" show-filter="true" class="table table-bordered table-striped table-hover">
             <tr ng-repeat="row in $data">
               <td title="'Όνομα'" filter="{'user.name': 'text'}" sortable="'user.name'">
                 <a href="#" class="" ui-sref="users.user({userId: row.user._id, vector: row.user.vector })">
@@ -154,7 +154,7 @@
         </div>
         <div class="panel-body">
           <gks-date-range-picker range="dashboardCtrl.suppliersFromAllUsersDate" class="pull-right margin-bottom-default"></gks-date-range-picker>
-          <table ng-table="dashboardCtrl.suppliersFromAllUsersTable" show-filter="true" class="table table-bordered table-striped table-hover">
+          <table ng-show="dashboardCtrl.suppliersFromAllUsersTable.total()" ng-table="dashboardCtrl.suppliersFromAllUsersTable" show-filter="true" class="table table-bordered table-striped table-hover">
             <tr ng-repeat="row in $data">
               <td title="'Όνομα'" filter="{'user.name': 'text'}" sortable="'user.name'">
                 <a href="#" class="" ui-sref="users.user({userId: row.user._id, vector: row.user.vector })">
