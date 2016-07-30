@@ -1,112 +1,134 @@
 <div cg-busy="dashboardCtrl.receiptSummariesPrms">
 
   <div class="row">
-    <div class="panel panel-gray">
-      <div class="panel-heading">
-        <h4>Αποδείξεις πώλησης</h4>
-      </div>
-      <div class="panel-body">
 
+    <div class="col-sm-6">
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Αποδείξεις</h4>
+        </div>
+        <div class="panel-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Αγοράς</th>
+                <th>Πώλησης</th>
+                <th>Ισοζύγιο</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Κατάθεση</th>
+                <td>{{dashboardCtrl.receiptSummaries.SUPPLIERS.bank}}</td>
+                <td>{{dashboardCtrl.receiptSummaries.CUSTOMERS.bank}}</td>
+                <td>{{dashboardCtrl.receiptSummaries.BALANCE.bank}}</td>
+              </tr>
+              <tr>
+                <th>Μετρητά</th>
+                <td>{{dashboardCtrl.receiptSummaries.SUPPLIERS.cash}}</td>
+                <td>{{dashboardCtrl.receiptSummaries.CUSTOMERS.cash}}</td>
+                <td>{{dashboardCtrl.receiptSummaries.BALANCE.cash}}</td>
+              </tr>
+              <tr>
+                <th>Επιταγή</th>
+                <td>{{dashboardCtrl.receiptSummaries.SUPPLIERS.check}}</td>
+                <td>{{dashboardCtrl.receiptSummaries.CUSTOMERS.check}}</td>
+                <td>{{dashboardCtrl.receiptSummaries.BALANCE.check}}</td>
+              </tr>
+              <tr>
+                <th>Σύνολο</th>
+                <td>{{dashboardCtrl.receiptSummaries.TOTAL.SUPPLIERS}}</td>
+                <td>{{dashboardCtrl.receiptSummaries.TOTAL.CUSTOMERS}}</td>
+                <td>{{dashboardCtrl.receiptSummaries.TOTAL.BALANCE}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Τιμολόγια</h4>
+        </div>
+        <div class="panel-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Αγοράς</th>
+                <th>Πώλησης</th>
+                <th>Ισοζύγιο</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{dashboardCtrl.invoiceSummaries.SUPPLIERS}}</td>
+                <td>{{dashboardCtrl.invoiceSummaries.CUSTOMERS}}</td>
+                <td>{{dashboardCtrl.invoiceSummaries.BALANCE}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Επιταγές</h4>
+        </div>
+        <div class="panel-body">
+          <uib-tabset>
+            <uib-tab heading="Αγοράς" select="dashboardCtrl.activateChart('gks-stockChart-receipt-suppliers')">
+              <div class="gks-stockChart-receipt-suppliers"></div>
+            </uib-tab>
+            <uib-tab heading="Πώλησης" select="dashboardCtrl.activateChart('gks-stockChart-receipt-customers')">
+              <div class="gks-stockChart-receipt-customers"></div>
+            </uib-tab>
+          </uib-tabset>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="row">
-
-    <div class="col-sm-6">
+    <div class="col-sm-12">
       <div class="panel panel-gray">
         <div class="panel-heading">
-          <h4>Αποδείξεις αγοράς</h4>
+          <h4>Τιμολόγια</h4>
         </div>
         <div class="panel-body">
-          <div class="gks-stockChart-receipt-suppliers"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-sm-6">
-      <div class="panel panel-gray">
-        <div class="panel-heading">
-          <h4>Αποδείξεις πώλησης</h4>
-        </div>
-        <div class="panel-body">
-          <div class="gks-stockChart-receipt-customers"></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="row">
-
-    <div class="panel panel-gray">
-      <div class="panel-heading">
-        <h4>Τιμολόγια</h4>
-      </div>
-      <div class="panel-body">
-        <div class="row">
-          <div class="info-tiles tiles-success col-sm-6">
-            <div class="tiles-heading">πώλησης</div>
-            <div class="tiles-body">
-              <div class="text-center">
-                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.invoiceSummaries.CUSTOMERS}}</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="info-tiles tiles-midnightblue col-sm-6">
-            <div class="tiles-heading">αγοράς</div>
-            <div class="tiles-body">
-              <div class="text-center">
-                <div class="info-text"><span class="superscript">€</span>{{dashboardCtrl.invoiceSummaries.SUPPLIERS}}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-  <div class="row">
-    <div class="col-sm-6">
-      <div class="panel panel-gray">
-        <div class="panel-heading">
-          <h4>Τιμολόγια αγοράς</h4>
-        </div>
-        <div class="panel-body">
-          <div class="gks-stockChart-invoice-suppliers"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-sm-6">
-      <div class="panel panel-gray">
-        <div class="panel-heading">
-          <h4>Τιμολόγια πώλησης</h4>
-        </div>
-        <div class="panel-body">
-          <div class="gks-stockChart-invoice-customers"></div>
+          <uib-tabset>
+            <uib-tab heading="Αγοράς" select="dashboardCtrl.activateChart('gks-stockChart-invoice-suppliers')">
+              <div class="gks-stockChart-invoice-suppliers"></div>
+            </uib-tab>
+            <uib-tab heading="Πώλησης" select="dashboardCtrl.activateChart('gks-stockChart-invoice-customers')">
+              <div class="gks-stockChart-invoice-customers"></div>
+            </uib-tab>
+          </uib-tabset>
         </div>
       </div>
     </div>
   </div>
 
   <div class="row">
-
-    <div class="col-sm-6">
-
+    <div class="col-sm-12">
       <div class="panel panel-gray">
         <div class="panel-heading">
-          <h4>Τιμολόγια αν χρήστη</h4>
+          <h4>Πωλήσεις αν χρήστη</h4>
         </div>
         <div class="panel-body">
-          <table ng-table="dashboardCtrl.invoiceSummariesFromAllUsersTable" show-filter="true" class="table table-bordered table-striped table-hover">
+          <table ng-table="dashboardCtrl.customersFromAllUsersTable" show-filter="true" class="table table-bordered table-striped table-hover">
+            <!--
             <colgroup>
               <col width="23%" />
-
             </colgroup>
+            -->
             <tr ng-repeat="row in $data">
               <td title="'Όνομα'" filter="{'user.name': 'text'}" sortable="'user.name'">
                 <a href="#" class="" ui-sref="users.user({userId: row.user._id, vector: row.user.vector })">
@@ -114,20 +136,48 @@
                 </a>
               </td>
               <td title="'Α.Φ.Μ.'" filter="{'user.vat': 'text'}" sortable="'user.vat'">{{row.user.vat}}</td>
-              <td title="'Αγορά'" filter="{'summaries.SUPPLIERS': 'number'}" sortable="'summaries.SUPPLIERS'">{{row.summaries.SUPPLIERS}}</td>
-              <td title="'Πώληση'" filter="{'summaries.CUSTOMERS': 'number'}" sortable="'summaries.CUSTOMERS'">{{row.summaries.CUSTOMERS}}</td>
+              <td title="'Τιμολόγια'" filter="{'invoices.BALANCE': 'number'}" sortable="'invoices.BALANCE'">{{row.invoices.BALANCE}}</td>
+              <td title="'Απόδ. κατάθεση'" filter="{'receipts.bank': 'number'}" sortable="'receipts.bank'">{{row.receipts.BALANCE.bank}}</td>
+              <td title="'Απόδ. μετρητά'" filter="{'receipts.check': 'number'}" sortable="'receipts.check'">{{row.receipts.BALANCE.check}}</td>
+              <td title="'Απόδ. επιταγή'" filter="{'receipts.cash': 'number'}" sortable="'receipts.cash'">{{row.receipts.BALANCE.cash}}</td>
+              <td title="'Σύνολο'" filter="{'total': 'number'}" sortable="'total'">{{row.total}}</td>
             </tr>
           </table>
         </div>
       </div>
-
     </div>
-
   </div>
 
-<!--   <hr>
-  <code>
-  {{dashboardCtrl.receiptSummariesFromAllUsers}}
-  </code> -->
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel panel-gray">
+        <div class="panel-heading">
+          <h4>Αγορές αν χρήστη</h4>
+        </div>
+        <div class="panel-body">
+          <table ng-table="dashboardCtrl.suppliersFromAllUsersTable" show-filter="true" class="table table-bordered table-striped table-hover">
+            <!--
+            <colgroup>
+              <col width="23%" />
+            </colgroup>
+            -->
+            <tr ng-repeat="row in $data">
+              <td title="'Όνομα'" filter="{'user.name': 'text'}" sortable="'user.name'">
+                <a href="#" class="" ui-sref="users.user({userId: row.user._id, vector: row.user.vector })">
+                  {{row.user.name}}
+                </a>
+              </td>
+              <td title="'Α.Φ.Μ.'" filter="{'user.vat': 'text'}" sortable="'user.vat'">{{row.user.vat}}</td>
+              <td title="'Τιμολόγια'" filter="{'invoices.BALANCE': 'number'}" sortable="'invoices.BALANCE'">{{row.invoices.BALANCE}}</td>
+              <td title="'Απόδ. κατάθεση'" filter="{'receipts.bank': 'number'}" sortable="'receipts.bank'">{{row.receipts.BALANCE.bank}}</td>
+              <td title="'Απόδ. μετρητά'" filter="{'receipts.check': 'number'}" sortable="'receipts.check'">{{row.receipts.BALANCE.check}}</td>
+              <td title="'Απόδ. επιταγή'" filter="{'receipts.cash': 'number'}" sortable="'receipts.cash'">{{row.receipts.BALANCE.cash}}</td>
+              <td title="'Σύνολο'" filter="{'total': 'number'}" sortable="'total'">{{row.total}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>

@@ -52,7 +52,7 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
 
     function getReceiptSummariesFromUser(userId, vector, dateRange) {
       const filteredReceipts = filterByDate(allReceipts, dateRange);
-      const userReceipts = _.filter(filteredReceipts, receipt => receipt.userId === userId && (!vector || invoice.vector === vector));
+      const userReceipts = _.filter(filteredReceipts, receipt => receipt.userId === userId && (!vector || receipt.vector === vector));
       return  _.isEmpty(userReceipts) ? undefined : getReceiptSummaries(userReceipts, dateRange);
     }
 
@@ -79,14 +79,15 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
         }
       );
       summaries.BALANCE = {
-        bank: summaries.SUPPLIERS.bank + summaries.CUSTOMERS.bank,
-        cash: summaries.SUPPLIERS.cash + summaries.CUSTOMERS.cash,
-        check: summaries.SUPPLIERS.check + summaries.CUSTOMERS.check
+        bank: summaries.CUSTOMERS.bank - summaries.SUPPLIERS.bank,
+        cash: summaries.CUSTOMERS.cash - summaries.SUPPLIERS.cash,
+        check: summaries.CUSTOMERS.check - summaries.SUPPLIERS.check
       }
       summaries.TOTAL = {
         SUPPLIERS: summaries.SUPPLIERS.bank + summaries.SUPPLIERS.cash + summaries.SUPPLIERS.check,
         CUSTOMERS: summaries.CUSTOMERS.bank + summaries.CUSTOMERS.cash + summaries.CUSTOMERS.check
       }
+      summaries.TOTAL.BALANCE = summaries.TOTAL.CUSTOMERS - summaries.TOTAL.SUPPLIERS;
       return summaries;
     }
 
@@ -100,7 +101,7 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
           CUSTOMERS: 0
         }
       );
-      summaries.BALANCE = summaries.SUPPLIERS + SUPPLIERS.CUSTOMERS;
+      summaries.BALANCE = summaries.CUSTOMERS - summaries.SUPPLIERS;
       return summaries;
     }
 
