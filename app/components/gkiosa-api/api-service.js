@@ -15,6 +15,7 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
 
   return {
     getUserDependencies,
+    getMixedItems,
 
     findUser: createSimpleCrudFind('users'),
     findAllUsers: createSimpleCrudFindAll('users'),
@@ -29,13 +30,13 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
     deleteProduct: createSimpleCrudDelete('products'),
 
     findReceipt: createSimpleCrudFind('receipts'),
-    findAllReceipts: createSimpleCrudFindAll('receipts'),
+    findAllReceipts,
     createReceipt: createCrudCreateWithUserId('receipts'),
     updateReceipt: createCrudUpdateWithUserId('receipts'),
     deleteReceipt: createSimpleCrudDelete('receipts'),
 
     findInvoice: createSimpleCrudFind('invoices'),
-    findAllInvoices: createSimpleCrudFindAll('invoices'),
+    findAllInvoices,
     createInvoice: createCrudCreateWithUserId('invoices'),
     updateInvoice: createCrudUpdateWithUserId('invoices'),
     deleteInvoice: createSimpleCrudDelete('invoices'),
@@ -116,12 +117,10 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
           cursor.exec(respHandle(findDeferred));
         })
       ])
-      .then(results => {
-        return {
-          total: results[0],
-          results: results[1]
-        };
-      });
+      .then(results => _.identity({
+        total: results[0],
+        results: results[1]
+      }));
     }
   }
 
@@ -144,10 +143,61 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
       .then(createSimpleCrudUpdate('users')(userId, user))
   }
 
+  function findAllInvoices(find, pagination, sort) {
+    return createSimpleCrudFindAll('invoices')(find, pagination, sort)
+      .then((resp) => {
+        _.each(resp.results, invoice => {
+          _.each(invoice.products, product => {
+            product.getVatPrice = () => product.price + product.price * product.vat;
+          });
+          invoice.getTotalPrice = () => _.sumBy(invoice.products, (p) => p.price);
+          invoice.getTotalVatPrice = () => _.sumBy(invoice.products, (p) => p.getVatPrice());
+        });
+        return resp;
+      });
+  }
+
+  function findAllReceipts(find, pagination, sort) {
+    return createSimpleCrudFindAll('receipts')(find, pagination, sort)
+      .then((resp) => {
+        _.each(resp.results, receipt => {
+          receipt.getTotalPrice = () => receipt.bank + receipt.cash + receipt.check;
+        });
+        return resp;
+      });
+  }
+
+  function getMixedItems(find) {
+    return $q.all([
+      findAllInvoices(find),
+      findAllReceipts(find)
+    ])
+    .then(results => {
+      if (_.isEmpty(results[0].results) && _.isEmpty(results[1].results)) {
+        return;
+      }
+      const mixed = (results[0].results || []).concat(results[1].results || []);
+      const mixedItems = _.chain(mixed)
+        .map(m => {
+          const type = _.has(m, 'products') ? 'invoice' : 'receipt';
+          const name = type === 'invoice' ? m.invoiceNum : m.receiptNum;
+          return {
+            type,
+            name,
+            date: m.date,
+            total: m.getTotalPrice
+          }
+        })
+        .value();
+
+      return mixedItems;
+    });
+  }
+
   function getUserDependencies(userId) {
     return $q.all([
-      createSimpleCrudFindAll('invoices')({ userId }),
-      createSimpleCrudFindAll('receipts')({ userId })
+      findAllInvoices({ userId }),
+      findAllReceipts({ userId })
     ])
     .then(results => {
       if (_.isEmpty(results[0].results) && _.isEmpty(results[1].results)) {

@@ -20,6 +20,7 @@ angular.module('gkiosa.app', [
   'gkiosa.app.sections.invoices',
   'gkiosa.app.sections.invoices.invoice',
   'gkiosa.app.sections.invoices.allInvoices',
+  'gkiosa.app.sections.mixedItems',
   'gkiosa.app.components.filters',
   'gkiosa.app.components.gkiosaApi',
   'gkiosa.app.components.pagination',
@@ -79,6 +80,12 @@ function AppController($rootScope, $scope, $state) {
       name: 'Πίνακας ελέγχου',
       icon: 'fa-th-large',
       id: 'dashboard'
+    },
+    {
+      sref: "mixedItems",
+      name: 'Μικτά',
+      icon: 'fa-th-large',
+      id: 'mixedItems'
     },
     {
       sref: "users.all({vector: 'CUSTOMERS'})",
