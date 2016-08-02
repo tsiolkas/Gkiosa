@@ -9,7 +9,7 @@
       <link rel="stylesheet" href="third-party-libs/load-awesome/css/ball-clip-rotate.css"/>
       <link rel="stylesheet" href="third-party-libs/ng-table/dist/ng-table.css"/>
       <link rel="stylesheet" href="third-party-libs/angular-ui-select/dist/select.css"/>
-      <link rel="stylesheet" href="third-party-libs/select2/select2.css"/>
+      <link rel="stylesheet" href="third-party-libs/select2/dist/css/select2.css"/>
       <link rel="stylesheet" href="third-party-libs/angular-toastr/dist/angular-toastr.css"/>
       <link rel="stylesheet" href="third-party-libs/bootstrap-daterangepicker/daterangepicker.css"/>
     <link rel="stylesheet" href="app.css"/>
@@ -21,7 +21,26 @@
     <div class="navbar-header pull-left">
       <a class="navbar-brand" href="#/">Gkiosa</a>
     </div>
+    <ul class="nav navbar-nav pull-right toolbar">
+      <li class="dropdown gks-options" uib-dropdown>
+        <a href id="simple-dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" uib-dropdown-toggle>
+          <span class="">Επιλογές </span>
+          <span class="glyphicon glyphicon-menu-hamburger"></span>
+        </a>
+        <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+          <li>
+            <a ui-sref="about()"><i class="fa fa-info-circle"></i> Πληροφορίες</a>
+          </li>
+          <li>
+            <a ui-sref="licence()"><i class="fa fa-copyright"></i> Δικαιώματα</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </header>
+
+
+
 
   <div id="page-container" class="clearfix">
     <nav id="page-leftbar" class="sidebar-nav" role="navigation">
@@ -62,9 +81,9 @@
   </div>
 
   <footer class="footer">
-      <p class="text-center">
-        Gkiosa
-      </p>
+    <p class="text-center">
+      Gkiosa - All rights reserved, John Apostolidis, 2016
+    </p>
   </footer>
   </body>
 
@@ -74,7 +93,7 @@
     <script src="third-party-libs/angular/angular.js"></script>
     <script src="third-party-libs/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="third-party-libs/angular-ui-select/dist/select.js"></script>
-    <script src="third-party-libs/select2/select2.js"></script>
+    <script src="third-party-libs/select2/dist/js/select2.js"></script>
     <script src="third-party-libs/angular-sanitize/angular-sanitize.js"></script>
     <script src="third-party-libs/angular-bootstrap/ui-bootstrap.js"></script>
     <script src="third-party-libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
@@ -84,6 +103,7 @@
     <script src="third-party-libs/angular-toastr/dist/angular-toastr.tpls.js"></script>
     <script src="third-party-libs/angular-animate/angular-animate.js"></script>
     <script src="third-party-libs/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="third-party-libs/ngBootbox/dist/ngBootbox.js"></script>
     <script src="third-party-libs/highcharts/highstock.js"></script>
     <script src="third-party-libs/nedb/browser-version/out/nedb.js"></script>
     <script src="app.js"></script>
@@ -92,10 +112,12 @@
     <script src="components/filters/filters.js"></script>
     <script src="components/gkiosa-api/gkiosa-api.js"></script>
     <script src="components/pagination/pagination.js"></script>
+    <script src="sections/about/about.js"></script>
     <script src="sections/dashboard/dashboard.js"></script>
     <script src="sections/invoices/all-invoices/all-invoices.js"></script>
     <script src="sections/invoices/invoice/invoice.js"></script>
     <script src="sections/invoices/invoices.js"></script>
+    <script src="sections/licence/licence.js"></script>
     <script src="sections/mixed-items/mixed-items.js"></script>
     <script src="sections/products/all-products/all-products.js"></script>
     <script src="sections/products/product/product.js"></script>
@@ -112,13 +134,15 @@
     <script src="components/gkiosa-api/api-service.js"></script>
     <script src="components/gkiosa-api/api-utilities-service.js"></script>
     <script src="components/pagination/pagination-service.js"></script>
-    <script src="sections/dashboard/dashboard-directive.js"></script>
-    <script src="sections/invoices/all-invoices/all-invoices-directive.js"></script>
+    <script src="sections/about/about-controller.js"></script>
+    <script src="sections/dashboard/dashboard-service.js"></script>
+    <script src="sections/invoices/all-invoices/all-invoices-service.js"></script>
     <script src="sections/invoices/invoice/invoice-controller.js"></script>
+    <script src="sections/licence/licence-controller.js"></script>
     <script src="sections/mixed-items/mixed-items-controller.js"></script>
     <script src="sections/products/all-products/all-products-controller.js"></script>
     <script src="sections/products/product/product-controller.js"></script>
-    <script src="sections/receipts/all-receipts/all-receipts-directive.js"></script>
+    <script src="sections/receipts/all-receipts/all-receipts-service.js"></script>
     <script src="sections/receipts/receipt/receipt-controller.js"></script>
     <script src="sections/users/all-users/all-users-controller.js"></script>
     <script src="sections/users/user/user-controller.js"></script>

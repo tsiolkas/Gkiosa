@@ -125,11 +125,11 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
   }
 
   function createSimpleCrudCreate(dbName) {
-    return (record) => deferredJob(deferred => db[dbName].insert(record, respHandle(deferred, record => record)));
+    return (record) => deferredJob(deferred => db[dbName].insert(sanitizeDBRecord(record), respHandle(deferred, record => record)));
   }
 
   function createSimpleCrudUpdate(dbName) {
-    return (id, record) => deferredJob(deferred => db[dbName].update({ _id: id }, record, {}, respHandle(deferred, record => record)));
+    return (id, record) => deferredJob(deferred => db[dbName].update({ _id: id }, sanitizeDBRecord(record), {}, respHandle(deferred, record => record)));
   }
 
   function createSimpleCrudDelete(dbName) {
@@ -179,13 +179,25 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
       const mixed = (results[0].results || []).concat(results[1].results || []);
       const mixedItems = _.chain(mixed)
         .map(m => {
-          const type = _.has(m, 'products') ? 'invoice' : 'receipt';
-          const name = type === 'invoice' ? m.invoiceNum : m.receiptNum;
+          let type;
+          if (_.has(m, 'products')) {
+            type = {
+              id: 'invoice',
+              name: 'τιμολόγιο'
+            };
+          } else {
+            type = {
+              id: 'receipt',
+              name: 'απόδειξη'
+            };
+          }
+          const name = type.id === 'invoice' ? m.invoiceNum : m.receiptNum;
           return {
             type,
             name,
             date: m.date,
-            total: m.getTotalPrice
+            total: m.getTotalPrice,
+            raw: m
           }
         })
         .value();
@@ -237,6 +249,34 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
         );
         return itemsWithUserId;
       });
+  }
+
+  function sanitizeDBRecord(mainRecord) {
+
+    return sanitizeDBRecordCollection(mainRecord);
+
+    function sanitizeDBRecordCollection(record) {
+      if(_.isArray(record)) {
+        return sanitizeDBRecordArray(record);
+      } else if(_.isObject(record) && !_.isDate(record)) {
+        return sanitizeDBRecordObject(record);
+      } else {
+        return record;
+      }
+    }
+
+    function sanitizeDBRecordArray(record) {
+      return _.transform(record, (sanRec, rec) => sanRec.push(sanitizeDBRecordCollection(rec)), []);
+    }
+
+    function sanitizeDBRecordObject(record) {
+      return _.transform(record, (sanRec, rec, recKey) => {
+        if (!((_.isFunction(rec) && !_.isDate(rec)) || recKey === '$$hashKey')) {
+          sanRec[recKey] = sanitizeDBRecordCollection(rec);
+        }
+      }, {});
+    }
+
   }
 
   function insertFakeDocuments() {
@@ -305,7 +345,7 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
           ];
           const invoice =  {
             products: invoicesProducts,
-            date: new Date(_.now() - (1000 * 60 * 60 * 24 * idx)),
+            date: new Date(_.now() - (1000 * 60 * 60 * 24 * (idx + 1))),
             userId: users[idx]._id,
             credit: idx%3===0,
             invoiceNum: `inv${idx*100}`,

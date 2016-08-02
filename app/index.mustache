@@ -16,7 +16,26 @@
     <div class="navbar-header pull-left">
       <a class="navbar-brand" href="#/">Gkiosa</a>
     </div>
+    <ul class="nav navbar-nav pull-right toolbar">
+      <li class="dropdown gks-options" uib-dropdown>
+        <a href id="simple-dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false" uib-dropdown-toggle>
+          <span class="">Επιλογές </span>
+          <span class="glyphicon glyphicon-menu-hamburger"></span>
+        </a>
+        <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+          <li>
+            <a ui-sref="about()"><i class="fa fa-info-circle"></i> Πληροφορίες</a>
+          </li>
+          <li>
+            <a ui-sref="licence()"><i class="fa fa-copyright"></i> Δικαιώματα</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </header>
+
+
+
 
   <div id="page-container" class="clearfix">
     {{=<% %>=}}
@@ -59,9 +78,9 @@
   <%={{ }}=%>
 
   <footer class="footer">
-      <p class="text-center">
-        Gkiosa
-      </p>
+    <p class="text-center">
+      Gkiosa - All rights reserved, John Apostolidis, 2016
+    </p>
   </footer>
   </body>
 

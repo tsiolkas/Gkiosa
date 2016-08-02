@@ -1,17 +1,15 @@
 <div>
-  <div class="row">
+  <div class="row margin-bottom-default">
 
-  <div class="col-xs-12 gks-all-controllers">
-    <form role="form" class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-1">Χρήστης</label>
-        <div class="col-sm-5">
+      <div class="col-lg-4 col-md-6">
+        <label for="user-selection">Χρήστης</label>
+        <div id="user-selection">
           <ui-select ng-model="mixedItemsCtrl.userId" title="Διάλεξε χρήστη" append-to-body="true">
             <ui-select-match placeholder="Χρήστης...">
               {{$select.selected.name}}, Α.Φ.Μ: {{$select.selected.vat}}
             </ui-select-match>
             <ui-select-choices repeat="user._id as user in mixedItemsCtrl.allUsers | propsFilter: {name: $select.search, vat: $select.search, code: $select.search}">
-               <div ng-bind-html="''+user.name | highlight: $select.search"></div>
+              <div ng-bind-html="''+user.name | highlight: $select.search"></div>
               <small>
                 <span ng-bind-html="'Α.Φ.Μ: ' + user.vat | highlight: $select.search"></span>,
                 <span ng-bind-html="'Κωδικός: ' + user.code | highlight: $select.search"></span>
@@ -19,32 +17,46 @@
             </ui-select-choices>
           </ui-select>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-1">Περίοδος</label>
-        <div class="col-sm-5">
+      </div> <!--user selection-->
+
+      <div class="col-lg-4 col-md-6">
+        <label for="date-range-selection">Περίοδος</label>
+        <div id="date-range-selection">
           <gks-date-range-picker
             range="mixedItemsCtrl.date">
           </gks-date-range-picker>
         </div>
-      </div>
-    </form>
+      </div> <!--date range selection-->
+
   </div>
 
-  <div class="col-xs-12" cg-busy="mixedItemsCtrl.promise">
-    <table ng-show="mixedItemsCtrl.mixedItemsTable.total()" ng-table="mixedItemsCtrl.mixedItemsTable" show-filter="true" class=" table table-bordered table-striped table-hover">
-<!--       <colgroup>
-        <col width="23%" />
-      </colgroup> -->
-      <tr ng-repeat="row in $data">
-        <td title="'Τύπος'" filter="{type: 'text'}" sortable="'type'">{{row.type}}</td>
-        <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">{{row.name}}</td>
-        <td title="'Ημερομηνία'" filter="{date: 'text'}" sortable="'date'">{{row.date}}</td>
-        <td title="'Σύνολο'" >{{row.total()}}</td>
-      </tr>
-    </table>
-  </div>
-
+  <div class="row" cg-busy="mixedItemsCtrl.promise">
+    <div class="col-lg-9">
+      <table ng-show="mixedItemsCtrl.mixedItemsTable.total()" ng-table="mixedItemsCtrl.mixedItemsTable" show-filter="true" class=" table table-bordered table-striped table-hover">
+         <colgroup>
+          <col width="10%" />
+          <col width="40%" />
+          <col width="20%" />
+          <col width="30%" />
+        </colgroup>
+        <tr ng-repeat="row in $data">
+          <td title="'Τύπος'" filter="{'type.name': 'text'}" sortable="'type.name'">
+            <button type="button" ng-click="mixedItemsCtrl.openItem(row)" class="btn btn-link btn-sm">
+              {{row.type.name}}
+            </button>
+          </td>
+          <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">{{row.name}}</td>
+          <td title="'Ημερομηνία'" filter="{date: 'text'}" sortable="'date'">
+            {{row.date | date: 'd/M/yyyy HH:mm:ss'}}
+          </td>
+          <td title="'Σύνολο'" >{{row.total()}}</td>
+        </tr>
+      </table>
+      <hr ng-hide="mixedItemsCtrl.mixedItemsTable.total()">
+      <span ng-hide="mixedItemsCtrl.userId"><b>Διαλέξτε χρήστη</b> </span>
+      <span ng-hide="mixedItemsCtrl.date"><b> Διαλέξτε περίοδο</b> </span>
+      <span ng-show="mixedItemsCtrl.userId && mixedItemsCtrl.date && mixedItemsCtrl.mixedItemsTable.total() === 0"><b>Δεν βρέθηκαν αποτελέσματα</b></span>
+    </div>
   </div>
 
 </div>

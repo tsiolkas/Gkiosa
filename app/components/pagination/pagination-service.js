@@ -39,12 +39,11 @@ function gkiosaPagination(
       filterDelay: 300,
       getData: params => {
         addTableParamsToUrl(params.parameters());
-        const find = {vector: host.vector};
-        _.transform(params.filter(), (result, value, key) => {
+        const find = _.transform(params.filter(), (result, value, key) => {
           if (!(_.isNil(value) || (_.isString(value) && !value))) {
             result[key] = valueToFilter(value);
           }
-        }, find);
+        }, {vector: host.vector});
 
         const pagination = {
           count: params.count(),
@@ -86,7 +85,7 @@ function gkiosaPagination(
       count: 10, // count per page
       sorting: {}
     };
-    defaultParams.sorting[sortingKey] = 'asc'
+    defaultParams.sorting[sortingKey] = 'asc';
 
     return _.defaults(params, defaultParams);
   }

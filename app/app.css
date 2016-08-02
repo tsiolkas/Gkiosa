@@ -14304,6 +14304,14 @@ fieldset[disabled] .jqvmap-zoomout.active {
   font-weight: normal;
   font-style: normal;
 }
+html,
+body {
+  height: 100%;
+}
+#page-container {
+  height: 100%;
+  overflow: auto !important;
+}
 [ui-view] {
   margin-top: 20px;
 }
@@ -14318,9 +14326,6 @@ gkiosa-alerts {
 .breadcrumb .seperator {
   margin-right: 10px;
   color: #666;
-}
-.gks-all-controllers {
-  margin-bottom: 15px;
 }
 input.gks-input-group-addon {
   margin-left: 10px;
@@ -14355,6 +14360,9 @@ table .gks-date .gks-date-picker {
   height: 18px;
   vertical-align: text-bottom;
 }
+table.gks-invoice-products .invoice-products-edited td {
+  background-color: #eee;
+}
 table.gks-invoice-products td input {
   width: 100%;
 }
@@ -14385,9 +14393,24 @@ input.ng-invalid.ng-touched {
 gks-date-range-picker {
   display: block;
   width: 260px;
+  height: 35px;
 }
-.margin-bottom-default {
+.margin-bottom-default,
+.gks-all-controllers {
   margin-bottom: 10px;
+}
+.margin-bottom-md {
+  margin-bottom: 20px;
+}
+.gks-options,
+.gks-options li {
+  font-size: 14px;
+  outline: 0px;
+  outline-offset: 20px;
+}
+.gks-about .panel-body,
+.gks-licence .panel-body {
+  font-size: 14px;
 }
 
 /*# sourceMappingURL=app.css.map */

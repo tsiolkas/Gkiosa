@@ -4,12 +4,12 @@ angular.module('gkiosa.app.sections.mixedItems', [
 
 .config($stateProvider => {
   $stateProvider.state('mixedItems', {
-    url: '',
+    url: '/mixedItems?table',
     templateUrl: 'sections/mixed-items/mixed-items.html',
     controller: 'MixedItemsController',
     controllerAs: 'mixedItemsCtrl',
     reloadOnSearch: false,
-    getBreadcrumbName: params => ['Μικτά'],
+    getBreadcrumbName: params => [{name: 'Αναζήτηση'}],
     getActiveMenuId: params => 'mixedItems'
   });
 });

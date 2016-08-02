@@ -57,9 +57,11 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
   }
 
   function createInvoice(invoice) {
+    if (!warningIfProductEdit()) {
+      return;
+    }
     invoice.vector = self.vector;
-    const clearedInvoice = getClearProductsHashkey(invoice);
-    self.promiseOfinvoice = gkiosaApi.createInvoice(clearedInvoice).then(
+    self.promiseOfinvoice = gkiosaApi.createInvoice(invoice).then(
       invoice => {
         $state.go('invoices.invoice', {invoiceId: invoice._id, vector: self.vector, name: invoice.name });
         toastr.success(`Η απόδειξη ${invoice.invoiceNum} δημιουργήθηκε`);
@@ -68,12 +70,20 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
   }
 
   function updateInvoice(invoice) {
-    const clearedInvoice = getClearProductsHashkey(invoice);
-    self.promiseOfinvoice = gkiosaApi.updateInvoice(clearedInvoice._id, clearedInvoice)
+    if (!warningIfProductEdit()) {
+      return;
+    }
+    self.promiseOfinvoice = gkiosaApi.updateInvoice(invoice._id, invoice)
       .then(() => {
         $state.go('invoices.invoice', {invoiceId: clearedInvoice._id, vector: self.vector, name: clearedInvoice.name });
         toastr.success(`Η απόδειξη ${clearedInvoice.invoiceNum} αποθηκεύτηκε`);
       });
+  }
+
+  function warningIfProductEdit() {
+    if (editedProductId) {
+      return confirm('Επεξεργάζεστε ένα προιόν, αν δεν το αποθηκέυσετε οι αλλαγές σας θα χαθούν.\nΘέλετε να συνεχίσετε?');
+    }
   }
 
   function deleteInvoice(invoice) {
@@ -123,14 +133,6 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
     _.defer(() => editProduct(newProduct));
   }
 
-  // exclude angular's $$hashKey
-  function getClearProductsHashkey(invoice) {
-    const clearedInvoice = _.assignIn({}, invoice);
-    clearedInvoice.products = _.each(clearedInvoice.products, product => {
-      delete product.$$hashKey;
-    });
-    return clearedInvoice;
-  }
 }
 
 })();

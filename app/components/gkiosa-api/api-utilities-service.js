@@ -186,8 +186,7 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
       credit: false,
       userId: undefined,
       user: undefined,
-      invoiceNum: undefined,
-      credit: false
+      invoiceNum: undefined
     };
   }
 

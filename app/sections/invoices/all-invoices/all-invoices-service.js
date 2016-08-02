@@ -37,7 +37,7 @@ function AllInvoicesController(
   }
 
   function editInvoice(invoice) {
-    $state.go('invoices.invoice', {invoiceId: invoice._id, vector: self.vector, name: ''+invoice.invoiceNum });
+    $state.go('invoices.invoice', {invoiceId: invoice._id, vector: self.vector, name: invoice.invoiceNum });
   }
 
   function getInvoiceProductKeys(products) {

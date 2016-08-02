@@ -7,6 +7,7 @@ angular.module('gkiosa.app', [
   'ui.router',
   'ngTable',
   'cgBusy',
+  'ngBootbox',
   'gkiosa.app.sections.dashboard',
   'gkiosa.app.sections.users',
   'gkiosa.app.sections.users.user',
@@ -21,6 +22,8 @@ angular.module('gkiosa.app', [
   'gkiosa.app.sections.invoices.invoice',
   'gkiosa.app.sections.invoices.allInvoices',
   'gkiosa.app.sections.mixedItems',
+  'gkiosa.app.sections.about',
+  'gkiosa.app.sections.licence',
   'gkiosa.app.components.filters',
   'gkiosa.app.components.gkiosaApi',
   'gkiosa.app.components.pagination',
@@ -36,7 +39,7 @@ angular.module('gkiosa.app', [
 .controller('AppController', AppController)
 
 .config($urlRouterProvider => {
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/mixedItems');
 })
 
 .config(toastrConfig => {
@@ -83,7 +86,7 @@ function AppController($rootScope, $scope, $state) {
     },
     {
       sref: "mixedItems",
-      name: 'Μικτά',
+      name: 'Αναζήτηση',
       icon: 'fa-th-large',
       id: 'mixedItems'
     },
