@@ -10,7 +10,7 @@ function DashboardController($scope, $element, gkiosaPagination, gkiosaApiUtilit
   const self = this;
 
   const dto = (new Date).getTime();
-  const dfrom = dto - (1000 * 60 * 60 * 24 * 30 * 3);
+  const dfrom = dto - (1000 * 60 * 60 * 24 * 30 * 3); // 3 months
   const dateRange = [dfrom, dto];
 
   self.receiptSummariesDate = undefined;
@@ -20,6 +20,11 @@ function DashboardController($scope, $element, gkiosaPagination, gkiosaApiUtilit
   self.customersFromAllUsersDate = undefined;
   self.suppliersFromAllUsersDate = undefined;
   self.hasInitialized = false;
+
+  self.receiptSummariesDate = _.clone(dateRange);
+  self.invoiceSummariesDate = _.clone(dateRange);
+  self.customersFromAllUsersDate = _.clone(dateRange);
+  self.suppliersFromAllUsersDate = _.clone(dateRange);
 
   self.activateChart = activateChart;
 
@@ -57,11 +62,6 @@ function DashboardController($scope, $element, gkiosaPagination, gkiosaApiUtilit
             self.suppliersFromAllUsersTable = gkiosaPagination.createStaticNgTableParams(suppliersFromAllUsers);
           }
         );
-
-        self.receiptSummariesDate = _.clone(dateRange);
-        self.invoiceSummariesDate = _.clone(dateRange);
-        self.customersFromAllUsersDate = _.clone(dateRange);
-        self.suppliersFromAllUsersDate = _.clone(dateRange);
 
         self.invoiceHistorical = statistics.getInvoiceHistorical();
         self.receiptHistorical = statistics.getReceiptHistorical();

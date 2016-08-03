@@ -33,12 +33,12 @@
   <div class="row" cg-busy="mixedItemsCtrl.promise">
     <div class="col-lg-9">
       <table ng-show="mixedItemsCtrl.mixedItemsTable.total()" ng-table="mixedItemsCtrl.mixedItemsTable" show-filter="true" class=" table table-bordered table-striped table-hover">
-         <colgroup>
-          <col width="10%" />
-          <col width="40%" />
-          <col width="20%" />
-          <col width="30%" />
-        </colgroup>
+         <!--<colgroup>-->
+          <!--<col width="10%" />-->
+          <!--<col width="40%" />-->
+          <!--<col width="20%" />-->
+          <!--<col width="30%" />-->
+        <!--</colgroup>-->
         <tr ng-repeat="row in $data">
           <td title="'Τύπος'" filter="{'type.name': 'text'}" sortable="'type.name'">
             <button type="button" ng-click="mixedItemsCtrl.openItem(row)" class="btn btn-link btn-sm">
@@ -49,7 +49,7 @@
           <td title="'Ημερομηνία'" filter="{date: 'text'}" sortable="'date'">
             {{row.date | date: 'd/M/yyyy HH:mm:ss'}}
           </td>
-          <td title="'Σύνολο'" >{{row.total()}}</td>
+          <td title="'Σύνολο'" >{{row.getTotalPrice()}}</td>
         </tr>
       </table>
       <hr ng-hide="mixedItemsCtrl.mixedItemsTable.total()">

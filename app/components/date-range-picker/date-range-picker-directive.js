@@ -31,8 +31,13 @@ function DateRangePickerController($scope, $element) {
   init();
 
   function init() {
-    const start = moment().subtract(29, 'days');
-    const end = moment();
+
+    if (!self.range) {
+      throw new Error('gksDateRangePicker called without date range parameter');
+    }
+
+    const start = moment(self.range[0]);
+    const end = moment(self.range[1]);
 
     dateEl.daterangepicker({
         startDate: start,

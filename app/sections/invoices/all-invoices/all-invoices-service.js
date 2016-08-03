@@ -18,18 +18,19 @@ function AllInvoicesController(
   const self = this;
 
   self.vector = $stateParams.vector;
+  self.expandedinvoices = {};
   self.invoicesTableParams = gkiosaPagination.createNgTableParams(self, 'Invoices', 'name');
+
   self.deleteInvoice = deleteInvoice;
   self.editInvoice = editInvoice;
   self.expandInvoice = expandInvoice;
   self.getInvoiceProductKeys = getInvoiceProductKeys;
+  self.getInvoiceTable = getInvoiceTable;
 
   init();
 
   function init() {
-    gkiosaApi.findAllUsers().then(resp => {
-      return $scope.allUsers = resp.results;
-    });
+    gkiosaApi.findAllUsers().then(resp => $scope.allUsers = resp.results);
   }
 
   function deleteInvoice(invoice) {
@@ -44,18 +45,16 @@ function AllInvoicesController(
     return _.chain(products).first().keys().reject(v => !_.isString(v) || v.indexOf('$$hashKey') !== -1).value();
   }
 
-  function expandInvoice($event, invoice) {
-    const rowEl = $($event.target).closest('tr');
-    const expandedInvoiceEl = $element.find('.gks-expanded-invoice');
-    if (self.expandedInvoice && self.expandedInvoice._id === invoice._id) {
-      expandedInvoiceEl.toggle();
+  function expandInvoice(idx, invoice) {
+    if (self.expandedinvoices[idx]) {
+      self.expandedinvoices[idx] = undefined;
     } else {
-      expandedInvoiceEl.show();
+      self.expandedinvoices[idx] = gkiosaPagination.createStaticNgTableParams(invoice.products);
     }
-    self.expandedInvoice = invoice;
-    expandedInvoiceEl.insertAfter(rowEl);
+  }
 
-    self.invoiceProductsTableParams = gkiosaPagination.createStaticNgTableParams(invoice.products);
+  function getInvoiceTable(idx) {
+    return self.expandedinvoices[idx];
   }
 }
 

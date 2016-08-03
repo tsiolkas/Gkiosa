@@ -148,10 +148,11 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
       .then((resp) => {
         _.each(resp.results, invoice => {
           _.each(invoice.products, product => {
-            product.getVatPrice = () => product.price + product.price * product.vat;
+            product.getPrice = () => product.price * product.quantity;
+            product.getVatPrice = () => (product.price + product.price * (product.vat / 100)) * product.quantity;
           });
-          invoice.getTotalPrice = () => _.sumBy(invoice.products, (p) => p.price);
-          invoice.getTotalVatPrice = () => _.sumBy(invoice.products, (p) => p.getVatPrice());
+          invoice.getTotalPrice = () => _.sumBy(invoice.products, p => p.getPrice());
+          invoice.getTotalVatPrice = () => _.sumBy(invoice.products, p => p.getVatPrice());
         });
         return resp;
       });
@@ -196,7 +197,7 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
             type,
             name,
             date: m.date,
-            total: m.getTotalPrice,
+            getTotalPrice: m.getTotalPrice,
             raw: m
           }
         })

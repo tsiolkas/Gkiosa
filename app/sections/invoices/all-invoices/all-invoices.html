@@ -11,15 +11,15 @@
   <div class="col-xs-12" cg-busy="allInvoicesCtrl.promise">
     <table ng-show="allInvoicesCtrl.invoicesTableParams.total()" ng-table="allInvoicesCtrl.invoicesTableParams" show-filter="true" class="els-all-receipts table table-bordered table-striped table-hover">
       <colgroup>
-        <col width="25%" />
-        <col width="15%" />
-        <col width="15%" />
-        <col width="15%" />
-        <col width="15%" />
-        <col width="5%" />
-        <col width="10%" />
+        <!--<col width="25%" />-->
+        <!--<col width="15%" />-->
+        <!--<col width="15%" />-->
+        <!--<col width="15%" />-->
+        <!--<col width="15%" />-->
+        <!--<col width="5%" />-->
+        <!--<col width="10%" />-->
       </colgroup>
-      <tr ng-repeat="row in $data track by row._id">
+      <tr ng-repeat-start="row in $data track by row._id">
         <td title="'Χρήστης'" filter="{'userId': 'components/table-custom-filters/select-user.html'}" sortable="'user.name'">{{row.user.name}}</td>
         <td title="'Α.Φ.Μ'" filter="{'user.vat': 'text'}" sortable="'user.vat'">{{row.user.vat}}</td>
         <td title="'Ημερομηνία'" filter="{date: 'components/table-custom-filters/date.html'}" sortable="'date'">
@@ -32,27 +32,25 @@
         <td title="'Τιμολόγιο'" filter="{invoiceNum: 'text'}" sortable="'invoiceNum'">{{row.invoiceNum}}</td>
         <td title="'Προιόντα'">
           {{row.products.length}}
-          <button type="button" ng-click="allInvoicesCtrl.expandInvoice($event, row)" class="btn btn-default btn-xs" title="Προιόντα"><i class="fa fa-chevron-down"></i></button>
+          <button type="button" ng-click="allInvoicesCtrl.expandInvoice($index, row)" class="btn btn-default btn-xs" title="Προιόντα"><i class="fa fa-chevron-down"></i></button>
         </td>
+        <td title="'Σύνολο'">{{row.getTotalPrice()}}</td>
+        <td title="'Σύνολο (Φ.Π.Α)'">{{row.getTotalVatPrice()}}</td>
         <td>
           <button type="button" ng-click="allInvoicesCtrl.editInvoice(row)" class="btn btn-primary btn-sm" title="Επεξεργασία"><i class="fa fa-pencil"></i></button>
           <button type="button" ng-click="allInvoicesCtrl.deleteInvoice(row)" class="btn btn-danger btn-sm" title="Διαγραφή"><i class="fa fa-trash-o"></i></button>
         </td>
       </tr>
-      <tr style="display: none;" class="gks-expanded-invoice well">
+      <tr class="gks-expanded-invoice well" ng-if="allInvoicesCtrl.getInvoiceTable($index)" ng-repeat-end>
         <td colspan="100">
-
-          <table ng-table="allInvoicesCtrl.invoiceProductsTableParams" show-filter="true" class="table table-bordered table-striped table-hover">
-            <colgroup>
-<!--               <col width="25%" />
-              <col width="15%" /> -->
-            </colgroup>
-            <tr ng-repeat="prRow in $data">
-              <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">{{prRow.name}}</td>
-              <td title="'Αναγνωριστικό'" filter="{productId: 'text'}" sortable="'productId'">{{prRow.productId}}</td>
-              <td title="'Φ.Π.Α.'" filter="{vat: 'text'}" sortable="'vat'">{{prRow.vat}}%</td>
-              <td title="'Τιμή'" filter="{price: 'number'}" sortable="'price'">{{prRow.price}}</td>
-              <td title="'Ποσότητα'" filter="{quantity: 'number'}" sortable="'quantity'">{{prRow.quantity}}</td>
+          <table ng-table="allInvoicesCtrl.getInvoiceTable($index)" show-filter="true" class="table table-bordered table-striped table-hover">
+            <tr ng-repeat="product in row.products">
+              <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">{{product.name}}</td>
+              <td title="'Αναγνωριστικό'" filter="{productId: 'text'}" sortable="'productId'">{{product.productId}}</td>
+              <td title="'Φ.Π.Α.'" filter="{vat: 'text'}" sortable="'vat'">{{product.vat}}%</td>
+              <td title="'Τιμή'" filter="{price: 'number'}" sortable="'price'">{{product.price}}</td>
+              <td title="'Ποσότητα'" filter="{quantity: 'number'}" sortable="'quantity'">{{product.quantity}}</td>
+              <td title="'Σύνολο'">{{product.getVatPrice()}}</td>
             </tr>
           </table>
         </td>

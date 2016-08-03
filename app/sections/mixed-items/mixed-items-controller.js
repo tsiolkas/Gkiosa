@@ -9,11 +9,15 @@ angular.module('gkiosa.app.sections.mixedItems')
 function MixedItemsController($scope, $state, $stateParams, gkiosaApi, gkiosaPagination) {
   const self = this;
 
+  const dto = (new Date).getTime();
+  const dfrom = dto - (1000 * 60 * 60 * 24 * 30); // 1 month
+  const dateRange = [dfrom, dto];
+
   self.promise = undefined;
   self.mixedItemsTable = undefined;
   self.allUsers = undefined;
   self.userId = undefined;
-  self.date = undefined;
+  self.date = dateRange;
 
   self.openItem = openItem;
 
@@ -26,9 +30,7 @@ function MixedItemsController($scope, $state, $stateParams, gkiosaApi, gkiosaPag
 
     urlToParams();
 
-    gkiosaApi.findAllUsers().then(resp => {
-      return self.allUsers = resp.results;
-    });
+    gkiosaApi.findAllUsers().then(resp => self.allUsers = resp.results);
   }
 
   function updateMixed() {
@@ -60,9 +62,11 @@ function MixedItemsController($scope, $state, $stateParams, gkiosaApi, gkiosaPag
   }
 
   function urlToParams() {
-    const table = $stateParams.table && JSON.parse(decodeURI($stateParams.table)) || {};
-    self.userId = table.userId;
-    self.date = table.date;
+    if ($stateParams.table) {
+      const table = JSON.parse(decodeURI($stateParams.table)) || {};
+      self.userId = table.userId;
+      self.date = table.date;
+    }
   }
 
   function paramsToUrl() {

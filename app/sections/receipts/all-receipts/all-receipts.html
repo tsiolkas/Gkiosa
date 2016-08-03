@@ -10,17 +10,17 @@
 
   <div class="col-xs-12" cg-busy="allReceiptsCtrl.promise">
     <table ng-show="allReceiptsCtrl.receiptsTableParams.total()" ng-table="allReceiptsCtrl.receiptsTableParams" show-filter="true" class="table table-bordered table-striped">
-      <colgroup>
-        <col width="15%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="5%" />
-        <col width="5%" />
-        <col width="5%" />
-        <col width="15%" />
-        <col width="10%" />
-      </colgroup>
+      <!--<colgroup>-->
+        <!--<col width="15%" />-->
+        <!--<col width="10%" />-->
+        <!--<col width="10%" />-->
+        <!--<col width="10%" />-->
+        <!--<col width="5%" />-->
+        <!--<col width="5%" />-->
+        <!--<col width="5%" />-->
+        <!--<col width="15%" />-->
+        <!--<col width="10%" />-->
+      <!--</colgroup>-->
       <tr ng-repeat="row in $data track by row._id">
         <td title="'Χρήστης'" filter="{'userId': 'components/table-custom-filters/select-user.html'}" sortable="'user.name'">{{row.user.name}}</td>
         <td title="'Α.Φ.Μ'" filter="{'user.vat': 'text'}" sortable="'user.vat'">{{row.user.vat}}</td>
@@ -29,6 +29,7 @@
         <td title="'Κατάθεση'" filter="{bank: 'number'}" sortable="'bank'">{{row.bank}}</td>
         <td title="'Μετρητά'" filter="{cash: 'number'}" sortable="'cash'">{{row.cash}}</td>
         <td title="'Επιταγή'" filter="{check: 'number'}" sortable="'check'">{{row.check}}</td>
+        <td title="'Σύνολο'">{{row.getTotalPrice()}}</td>
         <td title="'Σχόλιο'" filter="{commend: 'text'}" sortable="'commend'">{{row.commend}}</td>
         <td>
           <button type="button" ng-click="allReceiptsCtrl.editReceipt(row)" class="btn btn-primary btn-sm" title="Επεξεργασία"><i class="fa fa-pencil"></i></button>
