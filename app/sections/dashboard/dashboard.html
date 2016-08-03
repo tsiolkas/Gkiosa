@@ -1,5 +1,27 @@
 <div cg-busy="dashboardCtrl.receiptSummariesPrms">
 
+  <div ng-show="dashboardCtrl.isEmpty.all">
+  <div class="row">
+    <div class="col-xs-12 gks-md-txt">
+
+      <div class="alert ng-isolate-scope alert-success" role="alert" type="success">
+        <h3>Γεια σας,</h3>
+        <h4>Καλώς ήρθατε στην Gkiosa.</h4>
+        <p>Φαίνεται ότι είναι οι πρώτες φορές που χρησιμοποιείτε την εφαρμογή και δεν έχετε εισάγει αρκετά στοιχεία ακόμα!</p>
+      </div>
+
+      <p>Θα σας προτείναμε να συνεχίσετε κάνοντας:</p>
+      <ul>
+        <li><a ng-show="dashboardCtrl.isEmpty.users" ui-sref="users.user({userId: 'new', vector: 'CUSTOMERS' })">Eισαγωγή νέου χρήστη</a></li>
+        <li><a ng-show="dashboardCtrl.isEmpty.invoices" ui-sref="invoices.invoice({invoiceId: 'new', vector: 'CUSTOMERS' })">Eισαγωγή τιμολογίου</a></li>
+        <li><a ng-show="dashboardCtrl.isEmpty.receipts" ui-sref="receipts.receipt({receiptId: 'new', vector: 'CUSTOMERS' })">Eισαγωγή απόδειξης</a></li>
+      </ul>
+    </div>
+  </div>
+  </div>
+
+  <div ng-hide="dashboardCtrl.isEmpty.all">
+
   <div class="row">
 
     <div class="col-sm-6">
@@ -172,6 +194,8 @@
         </div>
       </div>
     </div>
+  </div>
+
   </div>
 
 </div>

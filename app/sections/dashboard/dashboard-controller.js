@@ -15,6 +15,8 @@ function DashboardController($scope, $element, gkiosaPagination, gkiosaApiUtilit
 
   self.receiptSummariesDate = undefined;
   self.invoiceSummariesDate = undefined;
+  self.invoiceSummaries = undefined;
+  self.receiptSummaries = undefined;
   self.customersFromAllUsersDate = undefined;
   self.suppliersFromAllUsersDate = undefined;
   self.hasInitialized = false;
@@ -63,6 +65,8 @@ function DashboardController($scope, $element, gkiosaPagination, gkiosaApiUtilit
 
         self.invoiceHistorical = statistics.getInvoiceHistorical();
         self.receiptHistorical = statistics.getReceiptHistorical();
+
+        self.isEmpty = statistics.isEmpty;
 
         const nameMaping = {
           bank: 'Τραπεζικά',

@@ -14408,9 +14408,8 @@ gks-date-range-picker {
   outline: 0px;
   outline-offset: 20px;
 }
-.gks-about .panel-body,
-.gks-licence .panel-body {
-  font-size: 14px;
+.gks-md-txt {
+  font-size: 16px;
 }
 
 /*# sourceMappingURL=app.css.map */

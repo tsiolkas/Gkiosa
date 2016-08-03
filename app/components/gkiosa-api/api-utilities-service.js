@@ -41,7 +41,13 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
       getCustomersFromAllUsers: genVectorFromAllUsers('CUSTOMERS'),
       getSuppliersFromAllUsers: genVectorFromAllUsers('SUPPLIERS'),
       getInvoiceHistorical,
-      getReceiptHistorical
+      getReceiptHistorical,
+      isEmpty: {
+        users: _.isEmpty(allUsers),
+        receipts: _.isEmpty(allReceipts),
+        invoices: _.isEmpty(allInvoices),
+        all: _.isEmpty(allUsers) || _.isEmpty(allReceipts) || _.isEmpty(allInvoices)
+      }
     };
 
     function getInvoiceSummariesFromUser(userId, vector, dateRange) {
