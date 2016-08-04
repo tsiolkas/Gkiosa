@@ -12,6 +12,14 @@
     "path": "app/third-party-libs/moment/moment.js"
   },
   {
+    "name": "pdfmake",
+    "path": "app/third-party-libs/pdfmake/build/pdfmake.js"
+  },
+  {
+    "name": "pdfmake-fonts",
+    "path": "app/third-party-libs/pdfmake/build/vfs_fonts.js"
+  },
+  {
     "name": "angular",
     "path": "app/third-party-libs/angular/angular.js"
   },
@@ -70,10 +78,6 @@
   {
     "name": "highcharts",
     "path": "app/third-party-libs/highcharts/highstock.js"
-  },
-  {
-    "name": "jspdf",
-    "path": "app/third-party-libs/jspdf/dist/jspdf.debug.js"
   },
   {
     "name": "nedb",
