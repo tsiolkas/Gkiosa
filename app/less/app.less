@@ -146,6 +146,10 @@ gks-date-range-picker {
   height: 35px;
 }
 
+.margin-left-default {
+  margin-left: 10px;
+}
+
 .margin-bottom-default, .gks-all-controllers {
   margin-bottom: 10px;
 }
@@ -162,4 +166,27 @@ gks-date-range-picker {
 
 .gks-md-txt {
   font-size: 16px;
+}
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  background: red;
+  cursor: inherit;
+  display: block;
+}
+input[readonly] {
+  background-color: white !important;
+  cursor: text !important;
 }

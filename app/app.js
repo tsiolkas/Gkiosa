@@ -23,20 +23,21 @@ angular.module('gkiosa.app', [
   'gkiosa.app.sections.invoices.allInvoices',
   'gkiosa.app.sections.mixedItems',
   'gkiosa.app.sections.about',
+  'gkiosa.app.sections.backup',
   'gkiosa.app.sections.licence',
   'gkiosa.app.components.filters',
   'gkiosa.app.components.gkiosaApi',
   'gkiosa.app.components.pagination',
   'gkiosa.app.components.charts',
-  'gkiosa.app.components.dateRangePicker'
+  'gkiosa.app.components.dateRangePicker',
+  'gkiosa.app.components.context',
+  'gkiosa.app.components.fileUtilities'
 ])
 
 .value('cgBusyDefaults', {
   templateUrl: 'components/theming/cg-busy-template.html',
   minDuration: 200
 })
-
-.controller('AppController', AppController)
 
 .config($urlRouterProvider => {
   $urlRouterProvider.otherwise('/mixedItems');
@@ -69,10 +70,21 @@ angular.module('gkiosa.app', [
   };
 })
 
+.config($ngBootboxConfigProvider => {
+  $ngBootboxConfigProvider.addLocale('gr', {
+    OK : 'OK',
+    CANCEL : 'Άκυρο',
+    CONFIRM : 'Επιβεβαίωση'
+  });
+  $ngBootboxConfigProvider.setDefaultLocale('gr');
+})
+
 .value('gkiosaConfig', {
   technicalContact: 'john.apostolidi@gmail.com',
   technicalName: 'Γιάννης Αποστολίδης'
-});
+})
+
+.controller('AppController', AppController);
 
 function AppController($rootScope, $scope, $state) {
   const self = this;

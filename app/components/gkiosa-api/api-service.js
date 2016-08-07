@@ -6,8 +6,14 @@ angular.module('gkiosa.app.components.gkiosaApi')
 
 .factory('gkiosaApi', gkiosaApi);
 
-function gkiosaApi($q, toastr, gkiosaConfig) {
+/*
+  @TODO: in restoreAllData we only check the date field for parse dates.
+  We should check all the fields in depth.
+*/
 
+function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
+
+  const tableNames = ['users', 'products', 'receipts', 'invoices'];
   const Datastore = getDBDriver();
   const db = createDbs();
 
@@ -16,6 +22,9 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
   return {
     getUserDependencies,
     getMixedItems,
+    getAllData,
+    restoreAllData,
+    deleteAllData,
 
     findUser: createSimpleCrudFind('users'),
     findAllUsers: createSimpleCrudFindAll('users'),
@@ -43,9 +52,9 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
   };
 
   function getDBDriver() {
-    if (typeof require !== 'undefined') {
+    if (gkiosaContext.isDesktop()) {
       return require('nedb');
-    } else if (typeof Nedb !== 'undefined') {
+    } else if (gkiosaContext.isBrowser()) {
       return Nedb;
     } else {
       throw new Error('Cannot find database');
@@ -53,12 +62,8 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
   }
 
   function createDbs() {
-    const db = {};
-    _.forEach(
-        ['users', 'products', 'receipts', 'invoices'],
-        dbName => db[dbName] = new Datastore({ filename: `db/${dbName}.db`, autoload: true })
-      );
-    return db;
+    const getter = (db, dbName) => db[dbName] = new Datastore({ filename: `db/${dbName}.db`, autoload: true });
+    return _.transform(tableNames, getter, {});
   }
 
   function deferredJob(job) {
@@ -97,6 +102,36 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
     }
   }
 
+  function getAllData() {
+    const findAllPrms = _.map(tableNames, dbName => createSimpleCrudFindAll(dbName)());
+    const getter = (all, resp, idx) => all[tableNames[idx]] = resp.results;
+    return $q.all(findAllPrms)
+      .then(results => _.transform(results, getter, {}));
+  }
+
+  function restoreAllData(data) {
+    _.each(data, (records, dbName) => {
+      if(tableNames.indexOf(dbName) === -1) {
+        throw new Error('incompatible data');
+      }
+      _.each(records, r => {
+        const date = new Date(Date.parse(r.date));
+        if (r.date && date.toISOString() === r.date) {
+          r.date = date;
+        }
+      });
+    });
+    return deleteAllData().then(() => {
+      const createAllPrms = _.map(data, (records, dbName) => createSimpleCrudCreate(dbName)(records));
+      return $q.all(createAllPrms);
+    });
+  }
+
+  function deleteAllData() {
+    const deleteAllPrms = _.map(tableNames, dbName => createSimpleCrudDelete(dbName)());
+    return $q.all(deleteAllPrms);
+  }
+
   function createSimpleCrudFind(dbName) {
     return (id) => deferredJob(deferred => db[dbName].find({ _id: id }, respHandle(deferred, users => _.first(users))));
   }
@@ -133,7 +168,11 @@ function gkiosaApi($q, toastr, gkiosaConfig) {
   }
 
   function createSimpleCrudDelete(dbName) {
-    return (id) => deferredJob(deferred => db[dbName].remove({ _id: id }, {}, respHandle(deferred, numRemoved => numRemoved)));
+    return (id) => deferredJob(deferred => {
+      const q = id ? { _id: id } : {};
+      const opts = id ? {} : { multi: true };
+      db[dbName].remove(q, opts, respHandle(deferred, numRemoved => numRemoved));
+    });
   }
 
   function updateUser(user) {

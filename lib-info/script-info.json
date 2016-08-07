@@ -1,5 +1,9 @@
 [
   {
+    "name": "pdfmake",
+    "path": "app/third-party-libs/pdfmake/build/pdfmake.js"
+  },
+  {
     "name": "lodash",
     "path": "app/third-party-libs/lodash/dist/lodash.js"
   },
@@ -12,8 +16,8 @@
     "path": "app/third-party-libs/moment/moment.js"
   },
   {
-    "name": "pdfmake",
-    "path": "app/third-party-libs/pdfmake/build/pdfmake.js"
+    "name": "bootstrap",
+    "path": "app/third-party-libs/bootstrap/dist/js/bootstrap.js"
   },
   {
     "name": "pdfmake-fonts",
@@ -68,12 +72,16 @@
     "path": "app/third-party-libs/angular-animate/angular-animate.js"
   },
   {
-    "name": "bootstrap-daterangepicker",
-    "path": "app/third-party-libs/bootstrap-daterangepicker/daterangepicker.js"
+    "name": "bootbox",
+    "path": "app/third-party-libs/bootbox/bootbox.js"
   },
   {
-    "name": "bootstrap-bootbox",
+    "name": "angular-bootbox",
     "path": "app/third-party-libs/ngBootbox/dist/ngBootbox.js"
+  },
+  {
+    "name": "bootstrap-daterangepicker",
+    "path": "app/third-party-libs/bootstrap-daterangepicker/daterangepicker.js"
   },
   {
     "name": "highcharts",

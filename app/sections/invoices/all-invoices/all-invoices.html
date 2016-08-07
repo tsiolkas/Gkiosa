@@ -20,7 +20,11 @@
         <!--<col width="10%" />-->
       </colgroup>
       <tr ng-repeat-start="row in $data track by row._id">
-        <td title="'Χρήστης'" filter="{'userId': 'components/table-custom-filters/select-user.html'}" sortable="'user.name'">{{row.user.name}}</td>
+        <td title="'Χρήστης'" filter="{'userId': 'components/table-custom-filters/select-user.html'}" sortable="'user.name'">
+          <a href="#" ui-sref="users.user({userId: row.user._id, vector: allInvoicesCtrl.vector, name: row.user.name})">
+            {{row.user.name}}
+          </a>
+        </td>
         <td title="'Α.Φ.Μ'" filter="{'user.vat': 'text'}" sortable="'user.vat'">{{row.user.vat}}</td>
         <td title="'Ημερομηνία'" filter="{date: 'components/table-custom-filters/date.html'}" sortable="'date'">
           {{row.date | date: 'd/M/yyyy HH:mm:ss'}}
