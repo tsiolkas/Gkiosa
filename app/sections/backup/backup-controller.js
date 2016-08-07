@@ -51,6 +51,9 @@
         try {
           const data = angular.fromJson(text);
           self.promise = gkiosaApi.restoreAllData(data);
+          self.promise.then(() => toastr.success(
+            `Η επαναφορά τον δεδομένων ολοκληρώθηκε επιτυχώς`, undefined, {timeOut: 10000}
+          ));
         } catch (e) {
           const msg = `Το αρχείο δεν είναι συμβατό με την εφαρμογή`;
           toastr.error(msg);
@@ -74,8 +77,8 @@
         .then(() => {
           self.promise = gkiosaApi.deleteAllData();
           self.promise.then(() => toastr.success(
-            `Η εφαρμογή επανήλθε στις εργοστασιακές ρυθμισεις`, undefined, {timeOut: 10000})
-          );
+            `Η εφαρμογή επανήλθε στις εργοστασιακές ρυθμισεις`, undefined, {timeOut: 10000}
+          ));
         });
     }
   }

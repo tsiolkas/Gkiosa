@@ -31,7 +31,8 @@ angular.module('gkiosa.app', [
   'gkiosa.app.components.charts',
   'gkiosa.app.components.dateRangePicker',
   'gkiosa.app.components.context',
-  'gkiosa.app.components.fileUtilities'
+  'gkiosa.app.components.fileUtilities',
+  'gkiosa.app.components.pdfGenerator'
 ])
 
 .value('cgBusyDefaults', {

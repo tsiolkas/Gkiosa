@@ -8,8 +8,16 @@
     "path": "app/third-party-libs/lodash/dist/lodash.js"
   },
   {
+    "name": "override-module-system",
+    "path": "app/components/require-system/override-module-system.js"
+  },
+  {
     "name": "jquery",
     "path": "app/third-party-libs/jquery/dist/jquery.js"
+  },
+  {
+    "name": "restore-module-system",
+    "path": "app/components/require-system/restore-module-system.js"
   },
   {
     "name": "moment",

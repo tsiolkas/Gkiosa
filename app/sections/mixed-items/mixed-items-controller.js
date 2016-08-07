@@ -6,7 +6,7 @@ angular.module('gkiosa.app.sections.mixedItems')
 
 .controller('MixedItemsController', MixedItemsController);
 
-function MixedItemsController($scope, $state, $stateParams, gkiosaApi, gkiosaPagination) {
+function MixedItemsController($scope, $state, $stateParams, gkiosaPdfGeneratorMixedItems, gkiosaApi, gkiosaPagination) {
   const self = this;
 
   const dto = (new Date).getTime();
@@ -18,6 +18,8 @@ function MixedItemsController($scope, $state, $stateParams, gkiosaApi, gkiosaPag
   self.allUsers = undefined;
   self.userId = undefined;
   self.date = dateRange;
+  self.generatePdf = generatePdf;
+  self.printPdf = printPdf;
 
   self.openItem = openItem;
 
@@ -48,9 +50,15 @@ function MixedItemsController($scope, $state, $stateParams, gkiosaApi, gkiosaPag
       'user._id': self.userId,
       'date': dateQ
     });
-    self.promise.then(mixedItems => {
-      self.mixedItemsTable = gkiosaPagination.createStaticNgTableParams(mixedItems);
-    });
+    self.promise.then(mixedItems => self.mixedItemsTable = gkiosaPagination.createStaticNgTableParams(mixedItems));
+  }
+
+  function generatePdf() {
+    gkiosaPdfGeneratorMixedItems.open(self.mixedItemsTable.data);
+  }
+
+  function printPdf() {
+    gkiosaPdfGeneratorMixedItems.print(self.mixedItemsTable.data);
   }
 
   function openItem(item) {
