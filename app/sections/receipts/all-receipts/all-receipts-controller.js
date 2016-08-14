@@ -30,7 +30,8 @@ function AllReceiptsController(
   }
 
   function deleteReceipt(receipt) {
-    self.promise = gkiosaApiUtilities.deleteReceipt(receipt).then(() => _.defer(() => $state.reload()));
+    self.promise = gkiosaApiUtilities.deleteReceipt(receipt);
+    self.promise && self.promise.then(() => _.defer(() => $state.reload()));
   }
 
   function editReceipt(receipt) {

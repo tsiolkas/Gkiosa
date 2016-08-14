@@ -20,7 +20,8 @@ function AllProductsController(
   self.editProduct = editProduct;
 
   function deleteProduct(product) {
-    self.promise = gkiosaApiUtilities.deleteProduct(product).then(() => _.defer(() => $state.reload()));
+    self.promise = gkiosaApiUtilities.deleteProduct(product);
+    self.promise && self.promise.then(() => _.defer(() => $state.reload()));
   }
 
   function editProduct(product) {

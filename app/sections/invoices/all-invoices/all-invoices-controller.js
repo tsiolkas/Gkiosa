@@ -34,7 +34,8 @@ function AllInvoicesController(
   }
 
   function deleteInvoice(invoice) {
-    self.promise = gkiosaApiUtilities.deleteInvoice(invoice).then(() => _.defer(() => $state.reload()));
+    self.promise = gkiosaApiUtilities.deleteInvoice(invoice);
+    self.promise && self.promise.then(() => _.defer(() => $state.reload()));
   }
 
   function editInvoice(invoice) {

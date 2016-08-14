@@ -20,7 +20,8 @@ function AllUsersController(
   self.editUser = editUser;
 
   function deleteUser(user) {
-    self.promise = gkiosaApiUtilities.deleteUser(user).then(() => _.defer(() => $state.reload()));
+    self.promise = gkiosaApiUtilities.deleteUser(user);
+    self.promise && self.promise.then(() => _.defer(() => $state.reload()));
   }
 
   function editUser(user) {

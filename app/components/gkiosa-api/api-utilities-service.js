@@ -6,7 +6,7 @@ angular.module('gkiosa.app.components.gkiosaApi')
 
 .factory('gkiosaApiUtilities', gkiosaApiUtilities);
 
-function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
+function gkiosaApiUtilities($rootScope, $q, $state, $ngBootbox, toastr, gkiosaApi) {
 
   return {
     getStatistics,
@@ -231,43 +231,63 @@ function gkiosaApiUtilities($rootScope, $q, toastr, gkiosaApi) {
 
   function deleteUser(user) {
     return gkiosaApi.getUserDependencies(user._id).then(dependencies => {
-      let result = true;
+      let prms;
       if (dependencies) {
-        let msg = '';
-        if (!_.isEmpty(dependencies.invoices)) {
-          msg += 'Τα τιμολόγια ' + dependencies.invoices.map(inv => inv.invoiceNum).join(', ') + ', ';
-        }
-        if (!_.isEmpty(dependencies.receipts)) {
-          msg += 'οι αποδείξεις ' + dependencies.receipts.map(inv => inv.receiptNum).join(', ') + ', ';
-        }
-        msg += `εξαρτώνται απο τον ${user.name}.\nΕιστε σίγουροι ότι θέλετε να τον διαγράψεται?`;
-        result = confirm(msg);
+        prms = $ngBootbox.confirm(getWarningMsg(dependencies));
+      } else {
+        prms = $q.when(true);
       }
-      if (result) {
-        return gkiosaApi.deleteUser(user._id).then(() => toastr.success(`Ο χρήστης ${user.name} διαγράφηκε`));
-      }
+      prms.then(() => gkiosaApi.deleteUser(user._id)
+                        .then(() => toastr.success(`Ο χρήστης ${user.name} διαγράφηκε`))
+      );
     });
+
+    function getWarningMsg(dependencies) {
+      let invMsg = '';
+      let recMsg = '';
+      if (!_.isEmpty(dependencies.invoices)) {
+        invMsg += 'Τα τιμολόγια ' + dependencies.invoices.map(inv => {
+          const invUrl = $state.href('invoices.invoice', {invoiceId: inv._id, vector: inv.vector, name: inv.invoiceNum});
+          return `<a href="${invUrl}">${inv.invoiceNum}</a>`;
+        }).join(', ');
+      }
+      if (!_.isEmpty(dependencies.receipts)) {
+        recMsg += 'Oι αποδείξεις ' + dependencies.receipts.map(rec => {
+          const recUrl = $state.href('receipts.receipt', {receiptId: rec._id, vector: rec.vector, name: rec.receiptNum});
+          return `<a href="${recUrl}">${rec.receiptNum}</a>`;
+        }).join(', ');
+      }
+      const userUrl = $state.href('users.user', {userId: user._id, vector: user.vector, name: user.name});
+      const userHref = `<a href="${userUrl}">${user.name}</a>`;
+      const userMsg = `Eξαρτώνται απο τον ${userHref}.`;
+
+      const warnMsg =  'Ειστε σίγουροι ότι θέλετε να τον διαγράψεται?';
+
+      const msg = `
+        <h4>${invMsg}</h4>
+        <h4>${recMsg}</h4>
+        <h4>${userMsg}</h4>
+        <p class="lead">${warnMsg}</p>`;
+      return msg;
+    }
   }
 
   function deleteProduct(product) {
-    const result = confirm(`Θέλετε σίγουρα να διαγράψετε το προιόν ${product.name}?`);
-    if (result) {
-      return gkiosaApi.deleteProduct(product._id).then(() => toastr.success(`Το προιόν ${product.name} διαγράφηκε`));
-    }
+    return $ngBootbox.confirm(`<h3>Θέλετε σίγουρα να διαγράψετε το προιόν ${product.name}?</h3>`)
+      .then(() => gkiosaApi.deleteProduct(product._id))
+      .then(() => toastr.success(`Το προιόν ${product.name} διαγράφηκε`));
   }
 
   function deleteInvoice(invoice) {
-    const result = confirm(`Θέλετε σίγουρα να διαγράψετε το τιμολόγιο ${invoice.invoiceNum}?`);
-    if (result) {
-      return gkiosaApi.deleteInvoice(invoice._id).then(() => toastr.success(`Το τιμολόγιο ${invoice.invoiceNum} διαγράφηκε`));
-    }
+    return $ngBootbox.confirm(`<h3>Θέλετε σίγουρα να διαγράψετε το τιμολόγιο ${invoice.invoiceNum}?</h3>`)
+      .then(() => gkiosaApi.deleteInvoice(invoice._id))
+      .then(() => toastr.success(`Το τιμολόγιο ${invoice.invoiceNum} διαγράφηκε`));
   }
 
   function deleteReceipt(receipt) {
-    const result = confirm(`Θέλετε σίγουρα να διαγράψετε την απόδειξη ${receipt.receiptNum}?`);
-    if (result) {
-      return gkiosaApi.deleteReceipt(receipt._id).then(() => toastr.success(`Η απόδειξη ${receipt.receiptNum} διαγράφηκε`));
-    }
+    return $ngBootbox.confirm(`<h3>Θέλετε σίγουρα να διαγράψετε την απόδειξη ${receipt.receiptNum}?</h3>`)
+      .then(() => gkiosaApi.deleteReceipt(receipt._id))
+      .then(() => toastr.success(`Η απόδειξη ${receipt.receiptNum} διαγράφηκε`));
   }
 
 }
