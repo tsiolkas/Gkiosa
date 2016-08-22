@@ -45,7 +45,7 @@
 
   <div class="row" cg-busy="mixedItemsCtrl.promise">
     <div class="col-lg-9">
-      <table ng-show="mixedItemsCtrl.mixedItemsTable.total()" ng-table="mixedItemsCtrl.mixedItemsTable" show-filter="true" class=" table table-bordered table-striped table-hover">
+      <table ng-show="mixedItemsCtrl.mixedItemsTable.total()" ng-table="mixedItemsCtrl.mixedItemsTable" show-filter="true" class="table table-bordered table-striped table-hover">
          <!--<colgroup>-->
           <!--<col width="10%" />-->
           <!--<col width="40%" />-->
@@ -62,7 +62,12 @@
           <td title="'Ημερομηνία'" filter="{date: 'text'}" sortable="'date'">
             {{row.date | date: 'd/M/yyyy HH:mm:ss'}}
           </td>
-          <td title="'Σύνολο'" >{{row.getTotalPrice()}}</td>
+          <td title="'Χρέωση'" >{{row.raw.vector === 'CUSTOMERS' ? row.getTotalVatPrice() : 0}}</td>
+          <td title="'Πίστωση'" >{{row.raw.vector === 'SUPPLIERS' ? row.getTotalVatPrice() : 0}}</td>
+
+          <td title="'Προδ. Χρέωση'" >{{row.progressive['CUSTOMERS']}}</td>
+          <td title="'Προδ. Πίστωση'" >{{row.progressive['SUPPLIERS']}}</td>
+          <td title="'Προδ. Σύνολο'" >{{row.progressive['TOTAL'] < 0 ? -1 * row.progressive['TOTAL'] : row.progressive['TOTAL']}}</td>
         </tr>
       </table>
       <hr ng-hide="mixedItemsCtrl.mixedItemsTable.total()">

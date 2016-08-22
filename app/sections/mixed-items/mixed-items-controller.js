@@ -42,23 +42,23 @@ function MixedItemsController($scope, $state, $stateParams, gkiosaPdfGeneratorMi
 
     paramsToUrl();
 
-    const dateQ = {
-      $lte: new Date(self.date[1]),
-      $gte: new Date(self.date[0])
-    };
-    self.promise = gkiosaApi.getMixedItems({
-      'user._id': self.userId,
-      'date': dateQ
-    });
+    self.promise = gkiosaApi.getMixedItems(self.userId, new Date(self.date[0]), new Date(self.date[1]));
     self.promise.then(mixedItems => self.mixedItemsTable = gkiosaPagination.createStaticNgTableParams(mixedItems));
   }
 
   function generatePdf() {
-    gkiosaPdfGeneratorMixedItems.open(self.mixedItemsTable.data);
+    gkiosaPdfGeneratorMixedItems.open({
+      mixedItems: self.mixedItemsTable.data,
+      user: _.find(self.allUsers, u => u._id === self.userId),
+      dateRange: self.date
+    });
   }
 
   function printPdf() {
-    gkiosaPdfGeneratorMixedItems.print(self.mixedItemsTable.data);
+    gkiosaPdfGeneratorMixedItems.print({
+      mixedItems: self.mixedItemsTable.data,
+      user: _.find(self.allUsers, u => u._id === self.userId)
+    });
   }
 
   function openItem(item) {

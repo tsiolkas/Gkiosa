@@ -75,8 +75,8 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
     }
     self.promiseOfinvoice = gkiosaApi.updateInvoice(invoice._id, invoice)
       .then(() => {
-        $state.go('invoices.invoice', {invoiceId: clearedInvoice._id, vector: self.vector, name: clearedInvoice.name });
-        toastr.success(`Η απόδειξη ${clearedInvoice.invoiceNum} αποθηκεύτηκε`);
+        $state.go('invoices.invoice', {invoiceId: invoice._id, vector: self.vector, name: invoice.name });
+        toastr.success(`Η απόδειξη ${invoice.invoiceNum} αποθηκεύτηκε`);
       });
   }
 
@@ -84,6 +84,7 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
     if (editedProductId) {
       return confirm('Επεξεργάζεστε ένα προιόν, αν δεν το αποθηκέυσετε οι αλλαγές σας θα χαθούν.\nΘέλετε να συνεχίσετε?');
     }
+    return true;
   }
 
   function deleteInvoice(invoice) {

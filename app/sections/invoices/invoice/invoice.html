@@ -76,23 +76,23 @@
           <tr ng-repeat="prRow in $data" ng-class="{'invoice-products-edited': invoiceCtrl.isProductEdited(prRow)}">
             <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.name}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.name" class="form-control" required>
+              <input ng-if="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.name" class="form-control" required>
             </td>
             <td title="'Αναγνωριστικό'" filter="{productId: 'text'}" sortable="'productId'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.productId}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.productId" class="form-control" required>
+              <input ng-if="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.productId" class="form-control" required>
             </td>
             <td title="'Φ.Π.Α.'" filter="{vat: 'number'}" sortable="'vat'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.vat}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.vat" class="form-control" required>
+              <input ng-if="invoiceCtrl.isProductEdited(prRow)" type="text" ng-model="prRow.vat" class="form-control" required>
             </td>
             <td title="'Τιμή'" filter="{price: 'number'}" sortable="'price'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.price}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="number" min="0" ng-model="prRow.price" class="form-control" required>
+              <input ng-if="invoiceCtrl.isProductEdited(prRow)" type="number" min="0" ng-model="prRow.price" class="form-control" required>
             </td>
             <td title="'Ποσότητα'" filter="{quantity: 'number'}" sortable="'quantity'">
               <span ng-hide="invoiceCtrl.isProductEdited(prRow)">{{prRow.quantity}}</span>
-              <input ng-show="invoiceCtrl.isProductEdited(prRow)" type="number" min="0" ng-model="prRow.quantity" class="form-control" required>
+              <input ng-if="invoiceCtrl.isProductEdited(prRow)" type="number" min="0" ng-model="prRow.quantity" class="form-control" required>
             </td>
             <td>
               <button type="button" ng-click="invoiceCtrl.editProduct(prRow)" class="btn btn-sm" title="Επεξεργασία" ng-disabled="invoiceCtrl.isProductInvalid(prRow)" ng-class="{

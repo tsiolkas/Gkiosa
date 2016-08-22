@@ -202,48 +202,78 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
       .then((resp) => {
         _.each(resp.results, receipt => {
           receipt.getTotalPrice = () => receipt.bank + receipt.cash + receipt.check;
+          receipt.getTotalVatPrice = receipt.getTotalPrice;
         });
         return resp;
       });
   }
 
-  function getMixedItems(find) {
+  function getMixedItems(userId, fromDate, toDate) {
+    const find = {
+      'user._id': userId,
+      'date': {
+        '$lte': toDate
+      }
+    };
     return $q.all([
       findAllInvoices(find),
       findAllReceipts(find)
     ])
     .then(results => {
-      if (_.isEmpty(results[0].results) && _.isEmpty(results[1].results)) {
+      const invoices = results[0].results;
+      const receipts = results[1].results;
+
+      if (_.isEmpty(invoices) && _.isEmpty(receipts)) {
         return;
       }
-      const mixed = (results[0].results || []).concat(results[1].results || []);
-      const mixedItems = _.chain(mixed)
-        .map(m => {
-          let type;
-          if (_.has(m, 'products')) {
-            type = {
-              id: 'invoice',
-              name: 'τιμολόγιο'
-            };
-          } else {
-            type = {
-              id: 'receipt',
-              name: 'απόδειξη'
-            };
-          }
-          const name = type.id === 'invoice' ? m.invoiceNum : m.receiptNum;
-          return {
-            type,
-            name,
-            date: m.date,
-            getTotalPrice: m.getTotalPrice,
-            raw: m
-          }
-        })
-        .value();
+
+      const mixed = _.sortBy((invoices || []).concat(receipts || []), 'date');
+      const mixedItems = [];
+      let prevItem;
+      _.each(mixed, item => {
+        const progressive = {};
+
+        progressive[item.vector] = item.getTotalVatPrice() + (prevItem ? prevItem.progressive[item.vector] : 0);
+        const opposite = item.vector === 'SUPPLIERS' ? 'CUSTOMERS' : 'SUPPLIERS';
+        progressive[opposite] = prevItem ? prevItem.progressive[opposite] : 0;
+        progressive['TOTAL'] = progressive['SUPPLIERS'] - progressive['CUSTOMERS'];
+
+        item.progressive = progressive;
+        prevItem = item;
+
+        // We fetch only the dates than toDate, no need for
+        // && item.date.getTime() <= toDate.getTime()
+        if (item.date.getTime() >= fromDate.getTime()) {
+          mixedItems.push(createMixedItem(item));
+        }
+      });
 
       return mixedItems;
     });
+
+    function createMixedItem(item) {
+      let type;
+      if (_.has(item, 'products')) {
+        type = {
+          id: 'invoice',
+          name: 'τιμολόγιο'
+        };
+      } else {
+        type = {
+          id: 'receipt',
+          name: 'απόδειξη'
+        };
+      }
+      const name = type.id === 'invoice' ? item.invoiceNum : item.receiptNum;
+      return {
+        type,
+        name,
+        date: item.date,
+        getTotalVatPrice: item.getTotalVatPrice,
+        progressive: item.progressive,
+        raw: item
+      }
+    }
   }
 
   function getUserDependencies(userId) {
