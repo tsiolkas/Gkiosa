@@ -96,6 +96,10 @@
     "path": "app/third-party-libs/highcharts/highstock.js"
   },
   {
+    "name": "mathjs",
+    "path": "app/third-party-libs/mathjs/dist/math.js"
+  },
+  {
     "name": "nedb",
     "path": "app/third-party-libs/nedb/browser-version/out/nedb.js"
   }

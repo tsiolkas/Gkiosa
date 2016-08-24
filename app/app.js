@@ -71,6 +71,13 @@ angular.module('gkiosa.app', [
   };
 })
 
+.run(() => {
+  math.config({
+    number: 'BigNumber',
+    precision: 20
+  });
+})
+
 .config($ngBootboxConfigProvider => {
   $ngBootboxConfigProvider.addLocale('gr', {
     OK : 'OK',
