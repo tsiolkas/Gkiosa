@@ -12,8 +12,10 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
   function generateDD(data) {
     const {user, midexItems, dateRange} = data;
 
+    const styles = getStyles();
     const header = createHeader(dateRange);
     const userBody = createUserInfo(user);
+    const content = createContent(midexItems);
 
     const dd = {
       content: [
@@ -26,27 +28,50 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
               body: userBody
           },
           layout: 'noBorders'
+        },
+        {
+          table: {
+            body: content
+          },
+          layout: {
+            hLineWidth: function(i, node) {
+              return (i === 0 || i === 1 || i === node.table.body.length) ? 2 : 1;
+            },
+            vLineWidth: function(i, node) {
+              return (i === 0 || i === node.table.widths.length) ? 2 : 1;
+            },
+            hLineColor: function(i, node) {
+              return (i === 0 || i === 1 || i === node.table.body.length) ? 'black' : 'gray';
+            },
+            vLineColor: function(i, node) {
+              return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
+            }
+         }
         }
       ],
-      styles: {
-        useDetail: {
-          bold: true
-        },
-        tableTitle: {
-          bold: true
-        },
-        tableHeader: {
-          bold: true,
-          fontSize: 13,
-          color: 'black'
-        },
-        products: {
-          color: '#444'
-        }
-      }
+      styles
     };
 
     return dd;
+  }
+
+  function getStyles() {
+    return {
+      useDetail: {
+        bold: true
+      },
+      tableTitle: {
+        bold: true
+      },
+      tableHeader: {
+        bold: true,
+        fontSize: 13,
+        color: 'black'
+      },
+      products: {
+        color: '#444'
+      }
+    };
   }
 
   function createHeader(dateRange) {
@@ -88,6 +113,31 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
       lastBody.push(info[0]);
       lastBody.push({ text: info[1], style: 'useDetail'});
     }, []);
+  }
+
+  function createContent(midexItems) {
+    const content = [];
+    content.push([
+      { text: 'Κινήσεις', style: 'tableTitle', colSpan: 4, alignment: 'center'}, {}, {}, {},
+      { text: 'Προοδευτικά', style: 'tableTitle', colSpan: 3, alignment: 'center'}, {}, {}
+    ]);
+
+    content.push([
+      { text: 'Ημερομηνία', style: 'tableHeader'},
+      { text: 'Παραστατικό', style: 'tableHeader'},
+      { text: 'Χρέωση', style: 'tableHeader'},
+      { text: 'Πίστωση', style: 'tableHeader'},
+      { text: 'Χρέωση', style: 'tableHeader'},
+      { text: 'Πίστωση', style: 'tableHeader'},
+      { text: 'Υπόλοιπο', style: 'tableHeader'}
+    ]);
+
+    const table = _.map(midexItems, item =>
+        _.has(item, 'products') ? createInvoice(item) : createReceipt(item));
+
+    content = content.concat(table);
+
+    return content;
   }
 }
 
@@ -202,3 +252,5 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
 //   }
 
 // }
+
+

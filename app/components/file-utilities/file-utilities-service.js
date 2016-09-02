@@ -33,7 +33,7 @@ function gkiosaFileUtilities() {
   }
 
   function readSingleFile(el, onStartReadingCb, onReadFileCb) {
-    el.find('input').change((e) => {
+    el.change((e) => {
       var file = e.target.files[0];
       if (!file || !onStartReadingCb()) {
         return;

@@ -14442,5 +14442,8 @@ input[readonly] {
   background-color: white !important;
   cursor: text !important;
 }
+.gks-all-receipts .ui-select-container {
+  max-width: 220px;
+}
 
 /*# sourceMappingURL=app.css.map */

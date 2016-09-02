@@ -36,15 +36,7 @@
     }
 
     function registerRestoreData() {
-      const fileEl = $element.find('.btn-file');
-      fileEl.find('input').click(evt => {
-        const msg = 'Προσοχή!\nΜε την εκτέλεση της επαναφοράς θα αντικατασταθούν'
-          + ' όλα τα δεδομένα στην εφαρμογή.\n\nΕίστε σίγουρος?';
-        const answer = confirm(msg);
-        if (!answer) {
-          evt.preventDefault();
-        }
-      });
+      const fileEl = $element.find('.btn-file input');
       let deferred;
       const onReadFile = text => {
         deferred.resolve(true);

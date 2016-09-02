@@ -1,4 +1,4 @@
-<div>
+<div class="gks-all-receipts">
   <div class="row">
 
   <div class="col-xs-12 gks-all-controllers">
@@ -10,17 +10,18 @@
 
   <div class="col-xs-12" cg-busy="allReceiptsCtrl.promise">
     <table ng-show="allReceiptsCtrl.receiptsTableParams.total()" ng-table="allReceiptsCtrl.receiptsTableParams" show-filter="true" class="table table-bordered table-striped">
-      <!--<colgroup>-->
-        <!--<col width="15%" />-->
-        <!--<col width="10%" />-->
-        <!--<col width="10%" />-->
-        <!--<col width="10%" />-->
-        <!--<col width="5%" />-->
-        <!--<col width="5%" />-->
-        <!--<col width="5%" />-->
-        <!--<col width="15%" />-->
-        <!--<col width="10%" />-->
-      <!--</colgroup>-->
+      <colgroup>
+        <col width="15%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="5%" />
+      </colgroup>
       <tr ng-repeat="row in $data track by row._id">
         <td title="'Χρήστης'" filter="{'userId': 'components/table-custom-filters/select-user.html'}" sortable="'user.name'">
           <a href="#" ui-sref="users.user({userId: row.user._id, vector: allReceiptsCtrl.vector, name: row.user.name})">

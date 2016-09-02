@@ -96,6 +96,15 @@ gulp.task('serve-dev', ['compile'], function() {
   gulp.watch('app/index.mustache', ['compile-index']);
 });
 
+gulp.task('serve', function() {
+  browserSync({
+    port: 8000,
+    server: {
+      baseDir: 'app'
+    }
+  });
+});
+
 gulp.task('clean', del.bind(null, [
     'node_modules',
     'app/third-party-libs/*',
