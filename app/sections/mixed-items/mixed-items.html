@@ -6,7 +6,9 @@
         <div id="user-selection">
           <ui-select ng-model="mixedItemsCtrl.userId" title="Διάλεξε χρήστη" append-to-body="true">
             <ui-select-match placeholder="Χρήστης...">
-              {{$select.selected.name}}, Α.Φ.Μ: {{$select.selected.vat}}
+              <span ng-show="$select.selected.name">
+                {{$select.selected.name}}, Α.Φ.Μ: {{$select.selected.vat}}
+              </span>
             </ui-select-match>
             <ui-select-choices repeat="user._id as user in mixedItemsCtrl.allUsers | propsFilter: {name: $select.search, vat: $select.search, code: $select.search}">
               <div ng-bind-html="''+user.name | highlight: $select.search"></div>
@@ -59,6 +61,7 @@
             </button>
           </td>
           <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">{{row.name}}</td>
+          <td title="'Κωδ. '" filter="{uniqId: 'number'}" sortable="'uniqId'">{{row.uniqId}}</td>
           <td title="'Ημερομηνία'" filter="{date: 'text'}" sortable="'date'">
             {{row.date | date: 'd/M/yyyy HH:mm:ss'}}
           </td>

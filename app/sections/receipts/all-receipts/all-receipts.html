@@ -30,7 +30,8 @@
         </td>
         <td title="'Α.Φ.Μ'" filter="{'user.vat': 'text'}" sortable="'user.vat'">{{row.user.vat}}</td>
         <td title="'Ημερομηνία'" filter="{date: 'components/table-custom-filters/date.html'}" sortable="'date'">{{row.date | date: 'd/M/yyyy HH:mm:ss'}}</td>
-        <td title="'Αριθμός απόδειξης'" filter="{receiptNum: 'text'}" sortable="'receiptNum'">{{row.receiptNum}}</td>
+        <td title="'Κωδ.'" filter="{uniqId: 'number'}" sortable="'uniqId'">{{row.uniqId}}</td>
+        <td title="'Τίτλος'" filter="{receiptNum: 'text'}" sortable="'receiptNum'">{{row.receiptNum}}</td>
         <td title="'Κατάθεση'" filter="{bank: 'number'}" sortable="'bank'">{{row.bank}}</td>
         <td title="'Μετρητά'" filter="{cash: 'number'}" sortable="'cash'">{{row.cash}}</td>
         <td title="'Επιταγή'" filter="{check: 'number'}" sortable="'check'">{{row.check}}</td>

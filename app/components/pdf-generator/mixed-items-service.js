@@ -7,46 +7,27 @@ angular.module('gkiosa.app.components.pdfGenerator')
 .factory('gkiosaPdfGeneratorMixedItems', gkiosaPdfGeneratorMixedItems);
 
 function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
+  const gksDate = $filter('gksDate');
+  const gksEuro = $filter('gksEuro');
+
   return gkiosaPdfGenerator.generatePdfMethods(generateDD);
 
   function generateDD(data) {
     const {user, mixedItems, dateRange} = data;
 
-    const styles = getStyles();
     const header = createHeader(dateRange);
-    const userBody = createUserInfo(user);
-    const content = createContent(mixedItems);
+    const userInfo = createUserInfo(user);
+    const contentTable = createContent(mixedItems);
+    const contentLayout = createContentLayout();
+    const styles = getStyles();
 
     const dd = {
       content: [
+        header,
+        userInfo,
         {
-          columns: header
-        },
-        {
-          table: {
-              headerRows: 1,
-              body: userBody
-          },
-          layout: 'noBorders'
-        },
-        {
-          table: {
-            body: content
-          },
-          layout: {
-            hLineWidth: function(i, node) {
-              return (i === 0 || i === 1 || i === node.table.body.length) ? 2 : 1;
-            },
-            vLineWidth: function(i, node) {
-              return (i === 0 || i === node.table.widths.length) ? 2 : 1;
-            },
-            hLineColor: function(i, node) {
-              return (i === 0 || i === 1 || i === node.table.body.length) ? 'black' : 'gray';
-            },
-            vLineColor: function(i, node) {
-              return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-            }
-         }
+          table: contentTable,
+          layout: contentLayout
         }
       ],
       styles
@@ -68,34 +49,41 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
         fontSize: 13,
         color: 'black'
       },
+      mixedItem: {
+        fontSize: 10,
+      },
       products: {
-        color: '#444'
+        color: '#444',
+        fontSize: 9,
       }
     };
   }
 
   function createHeader(dateRange) {
-    const fromDateStr = $filter('date')(new Date(dateRange[0]), 'd/M/yyyy');
-    const toDateStr = $filter('date')(new Date(dateRange[1]), 'd/M/yyyy');
-    const nowStr = $filter('date')(new Date(), 'd/M/yyyy');
-    return [
-      {
-        text: 'ΤΣΙΟΛΚΑΣ',
-        width: 140
-      },
-      {
-        text: `Περίοδος ${fromDateStr} - ${toDateStr}`,
-        width: 300
-      },
-      {
-        text: nowStr,
-        width: 100
-      }
-    ];
+    const fromDateStr = gksDate(dateRange[0]);
+    const toDateStr = gksDate(dateRange[1]);
+    const nowStr = gksDate(new Date());
+    return {
+      columns: [
+        {
+          text: 'ΤΣΙΟΛΚΑΣ',
+          width: 160
+        },
+        {
+          text: `Περίοδος ${fromDateStr} - ${toDateStr}`,
+          width: 300
+        },
+        {
+          text: nowStr,
+          width: 100
+        }
+      ]
+    };
   }
 
   function createUserInfo(user) {
-    return _.transform([
+    const userInfoLayout = createUserInfoLayout();
+    const info = _.transform([
       ['Κωδικός', user.code],
       ['Επάγγελμα', user.profession],
       ['Τηλέφωνο', '-'],
@@ -113,18 +101,28 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
       lastBody.push(info[0]);
       lastBody.push({ text: info[1], style: 'useDetail'});
     }, []);
+
+    return {
+      table: {
+        headerRows: 1,
+        widths: [70, 85, 70, 85, 70, 85],
+        body: info
+      },
+      margin: [0, 8],
+      layout: userInfoLayout
+    };
   }
 
   function createInvoice(item) {
     const invoice = [
-      item.date,
-      `ΤΙΜΟΛΟΓΙΟ - ${item.name}`,
-      item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0,
-      item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0,
-      item.progressive['CUSTOMERS'],
-      item.progressive['SUPPLIERS'],
-      Math.abs(item.progressive['TOTAL'])
-    ].map(_.toString);
+      gksDate(item.date),
+      `ΤΙΜΟΛΟΓΙΟ - ${item.name} - ${item.uniqId}`,
+      gksEuro(item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0),
+      gksEuro(item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0),
+      gksEuro(item.progressive['CUSTOMERS']),
+      gksEuro(item.progressive['SUPPLIERS']),
+      gksEuro(Math.abs(item.progressive['TOTAL']))
+    ].map(t => ({ text: t, style: 'mixedItem'}));
 
     const header = [
       'Κωδικός',
@@ -140,25 +138,25 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
       p.productId,
       p.name,
       p.quantity,
-      p.price,
-      p.getPrice(),
+      gksEuro(p.price),
+      gksEuro(p.getPrice()),
       p.vat,
-      p.getVatPrice()
-    ].map(_.toString));
+      gksEuro(p.getVatPrice())
+    ].map(t => ({ text: _.toString(t), style: 'products'})));
 
     return [invoice, header].concat(products);
   }
 
   function createReceipt(item) {
     return [
-      item.date,
-      `ΑΠΟΔΕΙΞΗ - ${item.name}`,
-      item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0,
-      item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0,
-      item.progressive['CUSTOMERS'],
-      item.progressive['SUPPLIERS'],
-      Math.abs(item.progressive['TOTAL'])
-    ].map(_.toString);
+      gksDate(item.date),
+      `ΑΠΟΔΕΙΞΗ - ${item.name} - ${item.uniqId}`,
+      gksEuro(item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0),
+      gksEuro(item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0),
+      gksEuro(item.progressive['CUSTOMERS']),
+      gksEuro(item.progressive['SUPPLIERS']),
+      gksEuro(Math.abs(item.progressive['TOTAL']))
+    ].map(t => ({ text: t, style: 'mixedItem'}));
   }
 
   function createContent(midexItems) {
@@ -186,7 +184,43 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
       }
     });
 
-    return content;
+    return {
+      body: content
+    };
+  }
+
+  function createUserInfoLayout() {
+    return {
+      hLineWidth: function(i, node) {
+        return (i === 0 || i === node.table.body.length) ? 1 : 0;
+      },
+      vLineWidth: function(i, node) {
+        return (i === 0 || i === node.table.widths.length) ? 1 : 0;
+      },
+      hLineColor: function(i, node) {
+        return (i === 0 || i === 1 || i === node.table.body.length) ? 'black' : 'gray';
+      },
+      vLineColor: function(i, node) {
+        return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
+      }
+     };
+  }
+
+  function createContentLayout() {
+    return {
+      hLineWidth: function(i, node) {
+        return (i === 0 || i === 1 || i === 2 || i === node.table.body.length) ? 1 : 0;
+      },
+      vLineWidth: function(i, node) {
+        return (i === 0 || i === node.table.widths.length) ? 1 : 0;
+      },
+      hLineColor: function(i, node) {
+        return (i === 0 || i === 1 || i === node.table.body.length) ? 'black' : 'gray';
+      },
+      vLineColor: function(i, node) {
+        return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
+      }
+     };
   }
 }
 
