@@ -146,7 +146,7 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
   function createSimpleCrudFindAll(dbName) {
     return (find, pagination, sort) => {
       return $q.all([
-        deferredJob(countDeferred => db[dbName].count({}, respHandle(countDeferred))),
+        deferredJob(countDeferred => db[dbName].count(find && find.vector ? {vector: find.vector} : {}, respHandle(countDeferred))),
         deferredJob(findDeferred => {
           const cursor = db[dbName].find(find || {});
           if (_.isObject(sort)) {
