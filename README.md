@@ -16,6 +16,13 @@ Currentrly, the text content is in *Greek*, there is no support for other langua
 * Run `gulp serve-dev` to build and run the development version of Gkiosa
 * Run `npm start` to run the desktop application
 
+### Distribution
+
+```
+npm install -g electron-packager
+electron-packager . --platform win32 --arch ia32
+```
+
 ## Details
 
 ### Database

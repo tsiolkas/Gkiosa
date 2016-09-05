@@ -10,12 +10,12 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
   return gkiosaPdfGenerator.generatePdfMethods(generateDD);
 
   function generateDD(data) {
-    const {user, midexItems, dateRange} = data;
+    const {user, mixedItems, dateRange} = data;
 
     const styles = getStyles();
     const header = createHeader(dateRange);
     const userBody = createUserInfo(user);
-    const content = createContent(midexItems);
+    const content = createContent(mixedItems);
 
     const dd = {
       content: [
@@ -115,8 +115,54 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
     }, []);
   }
 
+  function createInvoice(item) {
+    const invoice = [
+      item.date,
+      `ΤΙΜΟΛΟΓΙΟ - ${item.name}`,
+      item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0,
+      item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0,
+      item.progressive['CUSTOMERS'],
+      item.progressive['SUPPLIERS'],
+      Math.abs(item.progressive['TOTAL'])
+    ].map(_.toString);
+
+    const header = [
+      'Κωδικός',
+      'Περιγραφή',
+      'Ποσότητα',
+      'Τιμή Μοναδας',
+      'Καθαρή Αξία',
+      'Αξία ΦΠΑ',
+      'Σύνολο'
+    ].map(t => ({ text: t, style: 'products'}));
+
+    const products = _.map(item.raw.products, p => [
+      p.productId,
+      p.name,
+      p.quantity,
+      p.price,
+      p.getPrice(),
+      p.vat,
+      p.getVatPrice()
+    ].map(_.toString));
+
+    return [invoice, header].concat(products);
+  }
+
+  function createReceipt(item) {
+    return [
+      item.date,
+      `ΑΠΟΔΕΙΞΗ - ${item.name}`,
+      item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0,
+      item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0,
+      item.progressive['CUSTOMERS'],
+      item.progressive['SUPPLIERS'],
+      Math.abs(item.progressive['TOTAL'])
+    ].map(_.toString);
+  }
+
   function createContent(midexItems) {
-    const content = [];
+    let content = [];
     content.push([
       { text: 'Κινήσεις', style: 'tableTitle', colSpan: 4, alignment: 'center'}, {}, {}, {},
       { text: 'Προοδευτικά', style: 'tableTitle', colSpan: 3, alignment: 'center'}, {}, {}
@@ -132,10 +178,13 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
       { text: 'Υπόλοιπο', style: 'tableHeader'}
     ]);
 
-    const table = _.map(midexItems, item =>
-        _.has(item, 'products') ? createInvoice(item) : createReceipt(item));
-
-    content = content.concat(table);
+    _.each(midexItems, item => {
+      if (item.type.id === 'invoice') {
+        content = content.concat(createInvoice(item));
+      } else {
+        content.push(createReceipt(item));
+      }
+    });
 
     return content;
   }
