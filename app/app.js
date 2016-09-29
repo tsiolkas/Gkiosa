@@ -32,8 +32,11 @@ angular.module('gkiosa.app', [
   'gkiosa.app.components.dateRangePicker',
   'gkiosa.app.components.context',
   'gkiosa.app.components.fileUtilities',
-  'gkiosa.app.components.pdfGenerator'
+  'gkiosa.app.components.pdfGenerator',
+  'gkiosa.app.components.initApp'
 ])
+
+.run(() => window.gksAssert  = (cond, msg) => console.assert(cond, msg))
 
 .value('cgBusyDefaults', {
   templateUrl: 'components/theming/cg-busy-template.html',
@@ -47,19 +50,19 @@ angular.module('gkiosa.app', [
 .config(toastrConfig => {
   toastrConfig.autoDismiss = false;
   toastrConfig.closeButton = true;
-  toastrConfig.closeHtml = "<button>&times;</button>";
+  toastrConfig.closeHtml = '<button>&times;</button>';
   toastrConfig.customTemplate = false;
-  toastrConfig.extendedTimeOut = "5000";
+  toastrConfig.extendedTimeOut = '5000';
   toastrConfig.html = true;
   toastrConfig.allowHtml = true;
   toastrConfig.maxOpened = 0;
   toastrConfig.newestOnTop = true;
-  toastrConfig.position = "toast-top-right";
+  toastrConfig.position = 'toast-top-right';
   toastrConfig.preventDuplicates = false;
   toastrConfig.preventOpenDuplicates = false;
   toastrConfig.progressBar = true;
   toastrConfig.tapToDismiss = true;
-  toastrConfig.timeOut = "5000";
+  toastrConfig.timeOut = '5000';
 })
 
 .run(NgTableParams => {
@@ -95,9 +98,10 @@ angular.module('gkiosa.app', [
 
 .controller('AppController', AppController);
 
-function AppController($rootScope, $scope, $state) {
+function AppController($rootScope, $scope, $state, gkiosaInitApp) {
   const self = this;
 
+<<<<<<< HEAD
   self.sidebarMenu = [
     {
       sref: "dashboard",
@@ -160,6 +164,10 @@ function AppController($rootScope, $scope, $state) {
       id: 'products.all.suppliers'
     }
   ];
+
+  gkiosaInitApp.init();
+
+  self.sidebarMenu = getSidebarMenu();
   self.sidebarMenuClicked = sidebarMenuClicked;
   self.historyGoBack = historyGoBack;
   self.historyGoForward = historyGoForward;
@@ -183,5 +191,70 @@ function AppController($rootScope, $scope, $state) {
   function historyGoForward() {
     window.history.forward();
     _.defer(() => $state.reload());
+  }
+
+  function getSidebarMenu() {
+    return [
+      {
+        sref: "dashboard",
+        name: 'Πίνακας ελέγχου',
+        icon: 'fa-th-large',
+        id: 'dashboard'
+      },
+      {
+        sref: "mixedItems",
+        name: 'Αναζήτηση',
+        icon: 'fa-th-large',
+        id: 'mixedItems'
+      },
+      {
+        sref: "users.all({vector: 'CUSTOMERS'})",
+        name: 'Πελάτες',
+        icon: 'fa-th-large',
+        id: 'users.all.customers'
+      },
+      {
+        sref: "users.all({vector: 'SUPPLIERS'})",
+        name: 'Προμηθευτές',
+        icon: 'fa-th-large',
+        id: 'users.all.suppliers'
+      },
+      {
+        sref: "invoices.all({vector: 'CUSTOMERS'})",
+        name: 'Τιμολόγια πώλησης',
+        icon: 'fa-th-large',
+        id: 'invoices.all.customers'
+      },
+      {
+        sref: "invoices.all({vector: 'SUPPLIERS'})",
+        name: 'Τιμολόγια αγοράς',
+        icon: 'fa-th-large',
+        id: 'invoices.all.suppliers'
+      },
+      {
+        sref: "receipts.all({vector: 'CUSTOMERS'})",
+        name: 'Αποδείξεις πώλησης',
+        icon: 'fa-th-large',
+        id: 'receipts.all.customers'
+      },
+      {
+        sref: "receipts.all({vector: 'SUPPLIERS'})",
+        name: 'Αποδείξεις αγοράς',
+        icon: 'fa-th-large',
+        id: 'receipts.all.suppliers'
+      },
+      {
+        sref: "products.all({vector: 'CUSTOMERS'})",
+        name: 'Προιόντα πώλησης',
+        icon: 'fa-th-large',
+        id: 'products.all.customers'
+      },
+      {
+        sref: "products.all({vector: 'SUPPLIERS'})",
+        name: 'Προιόντα αγοράς',
+        icon: 'fa-th-large',
+        id: 'products.all.suppliers'
+      }
+    ];
   }
 };

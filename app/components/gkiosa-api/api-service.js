@@ -13,13 +13,13 @@ angular.module('gkiosa.app.components.gkiosaApi')
 
 function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
 
-  const tableNames = ['users', 'products', 'receipts', 'invoices'];
+  const tableNames = ['users', 'products', 'receipts', 'invoices', 'appinfo'];
   const Datastore = getDBDriver();
   const db = createDbs();
 
   // insertFakeDocuments();
 
-  return {
+  const retVal = {
     getUserDependencies,
     getMixedItems,
     getAllData,
@@ -49,7 +49,14 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
     createInvoice: createCrudCreateWithUserId('invoices'),
     updateInvoice: createCrudUpdateWithUserId('invoices'),
     deleteInvoice: createSimpleCrudDelete('invoices'),
+
+    findAppInfo,
+    createAppInfo: createSimpleCrudCreate('appinfo'),
+    updateAppInfo: createSimpleCrudUpdate('appinfo'),
+    deleteAppInfo: createSimpleCrudDelete('appinfo'),
   };
+
+  return retVal;
 
   function getDBDriver() {
     if (gkiosaContext.isDesktop()) {
@@ -139,7 +146,7 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
   function createSimpleCrudFindAll(dbName) {
     return (find, pagination, sort) => {
       return $q.all([
-        deferredJob(countDeferred => db[dbName].count({}, respHandle(countDeferred))),
+        deferredJob(countDeferred => db[dbName].count(find && find.vector ? {vector: find.vector} : {}, respHandle(countDeferred))),
         deferredJob(findDeferred => {
           const cursor = db[dbName].find(find || {});
           if (_.isObject(sort)) {
@@ -160,11 +167,13 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
   }
 
   function createSimpleCrudCreate(dbName) {
-    return (record) => deferredJob(deferred => db[dbName].insert(sanitizeDBRecord(record), respHandle(deferred, record => record)));
+    return (record) => deferredJob(deferred =>
+        db[dbName].insert(sanitizeDBRecord(record), respHandle(deferred, record => record)));
   }
 
   function createSimpleCrudUpdate(dbName) {
-    return (id, record) => deferredJob(deferred => db[dbName].update({ _id: id }, sanitizeDBRecord(record), {}, respHandle(deferred, record => record)));
+    return (id, record) => deferredJob(deferred =>
+        db[dbName].update({ _id: id }, sanitizeDBRecord(record), {}, respHandle(deferred, record => record)));
   }
 
   function createSimpleCrudDelete(dbName) {
@@ -190,8 +199,8 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
             product.getPrice = () => math.do(`${product.price} * ${product.quantity}`);
             product.getVatPrice = () => math.do(`${product.price} * ${product.quantity} * ((${product.vat} / 100) + 1)`);
           });
-          invoice.getTotalPrice = () => _.sumBy(invoice.products, p => p.getPrice());
-          invoice.getTotalVatPrice = () => _.sumBy(invoice.products, p => p.getVatPrice());
+          invoice.getTotalPrice = () => _.reduce(invoice.products, (sum, p) => math.do(`${sum} + ${p.getPrice()}`), 0);
+          invoice.getTotalVatPrice = () => _.reduce(invoice.products, (sum, p) => math.do(`${sum} + ${p.getVatPrice()}`), 0);
         });
         return resp;
       });
@@ -205,6 +214,23 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
           receipt.getTotalVatPrice = receipt.getTotalPrice;
         });
         return resp;
+      });
+  }
+
+  function findAppInfo() {
+    return createSimpleCrudFindAll('appinfo')()
+      .then(appInfoRes => {
+        const appInfo = _.get(appInfoRes, 'results[0]');
+        if (appInfo) {
+          appInfo.increaseInvoice = () => {
+            ++appInfo.invoiceId;
+            return retVal.updateAppInfo(appInfo._id, appInfo);
+          };
+          appInfo.increaseReceipt = () => {
+            ++appInfo.receiptId;
+            return retVal.updateAppInfo(appInfo._id, appInfo);
+          };
+        }
       });
   }
 
@@ -268,6 +294,7 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
       return {
         type,
         name,
+        uniqId: item.uniqId,
         date: item.date,
         getTotalVatPrice: item.getTotalVatPrice,
         progressive: item.progressive,
@@ -364,15 +391,16 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
     });
     const promiseOfUsers = createSimpleCrudCreate('users')(users);
     promiseOfUsers.then(users => {
-      _.range(100).forEach(idx => {
+      _.range(300).forEach(idx => {
         const receipt =  {
-          date: new Date(_.now() - (1000 * 60 * 60 * 24 * idx)),
+          date: new Date(_.now() - (1000 * 60 * 60 * 24 * ((idx + 1) % 20))),
+          uniqId: idx + 1,
           receiptNum: `rec${idx*100}`,
           commend: `commend${idx}`,
           bank: idx%7===0 ? 0 : idx*100,
           cash: idx%13===0 ? 0 : idx*100,
           check: idx%17===0 ?  0: idx*100,
-          userId: users[idx]._id,
+          userId: users[idx % 100]._id,
           vector: idx % 2 === 0 ? 'SUPPLIERS': 'CUSTOMERS'
         };
         createCrudCreateWithUserId('receipts')(receipt);
@@ -394,7 +422,7 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
       .then(results => {
         const users = results[0];
         const products = results[1];
-        _.range(100).forEach(idx => {
+        _.range(300).forEach(idx => {
           const invoicesProducts = [
             _.assignIn({
               price: 200*idx,
@@ -415,8 +443,9 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
           ];
           const invoice =  {
             products: invoicesProducts,
-            date: new Date(_.now() - (1000 * 60 * 60 * 24 * (idx + 1))),
-            userId: users[idx]._id,
+            uniqId: idx + 1,
+            date: new Date(_.now() - (1000 * 60 * 60 * 24 * ((idx + 1) % 20))),
+            userId: users[idx % 100]._id,
             credit: idx%3===0,
             invoiceNum: `inv${idx*100}`,
             vector: idx%2===0?'SUPPLIERS': 'CUSTOMERS'

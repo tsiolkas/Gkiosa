@@ -17,6 +17,7 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
     newProduct: undefined,
     invoiceProductsTableParams: undefined,
     invoice: undefined,
+    appInfo: undefined,
 
     createInvoice,
     updateInvoice,
@@ -32,14 +33,16 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
 
   function init() {
     if (self.invoiceId) {
-      findInvoice(self.invoiceId)
+      findInvoice(self.invoiceId);
     } else {
-      self.invoice = gkiosaApiUtilities.createEmptyInvoice();
-      self.invoiceProductsTableParams = gkiosaPagination.createStaticNgTableParams(self.invoice.products);
+      gkiosaApi.findAppInfo()
+        .then(appInfo => {
+          self.appInfo = appInfo;
+          self.invoice = gkiosaApiUtilities.createEmptyInvoice(appInfo.invoiceId);
+          self.invoiceProductsTableParams = gkiosaPagination.createStaticNgTableParams(self.invoice.products);
+        });
     }
-    gkiosaApi.findAllUsers().then(resp => {
-      return self.users = resp.results;
-    });
+    gkiosaApi.findAllUsers().then(resp => self.users = resp.results);
     gkiosaApi.findAllProducts().then(resp => self.products = resp.results);
 
     $scope.$watch(
@@ -63,6 +66,7 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
     invoice.vector = self.vector;
     self.promiseOfinvoice = gkiosaApi.createInvoice(invoice).then(
       invoice => {
+        self.appInfo.increaseInvoice();
         $state.go('invoices.invoice', {invoiceId: invoice._id, vector: self.vector, name: invoice.name });
         toastr.success(`Η απόδειξη ${invoice.invoiceNum} δημιουργήθηκε`);
       }

@@ -12,6 +12,7 @@ function ReceiptController($rootScope, $state, $stateParams, toastr, gkiosaApi, 
   self.vector = $stateParams.vector;
   self.isNew = $stateParams.receiptId === 'new';
   self.receiptId = self.isNew ? undefined : $stateParams.receiptId;
+  self.appInfo = undefined;
 
   self.createReceipt = createReceipt;
   self.updateReceipt = updateReceipt;
@@ -23,12 +24,15 @@ function ReceiptController($rootScope, $state, $stateParams, toastr, gkiosaApi, 
     if (self.receiptId) {
       findReceipt(self.receiptId);
     } else {
-      self.receipt = gkiosaApiUtilities.createEmptyReceipt();
+      gkiosaApi.findAppInfo()
+        .then(appInfo => {
+          self.appInfo = appInfo;
+          self.receipt = gkiosaApiUtilities.createEmptyReceipt(appInfo.receiptId);
+          self.invoiceProductsTableParams = gkiosaPagination.createStaticNgTableParams(self.invoice.products);
+        });
+
     }
-    gkiosaApi.findAllUsers()
-      .then(resp => {
-        self.users = resp.results;
-      });
+    gkiosaApi.findAllUsers().then(resp => self.users = resp.results);
   }
 
   function findReceipt(id) {
@@ -39,6 +43,7 @@ function ReceiptController($rootScope, $state, $stateParams, toastr, gkiosaApi, 
     receipt.vector = self.vector;
     self.promiseOfreceipt = gkiosaApi.createReceipt(receipt).then(
       receipt => {
+        self.appInfo.increaseReceipt();
         $state.go('receipts.receipt', {receiptId: receipt._id, vector: self.vector, name: receipt.name });
         toastr.success(`Η απόδειξη ${receipt.receiptNum} δημιουργήθηκε`);
       }
@@ -55,7 +60,7 @@ function ReceiptController($rootScope, $state, $stateParams, toastr, gkiosaApi, 
   }
 
   function deleteReceipt(receipt) {
-    self.promise = gkiosaApiUtilities.deleteReceipt(receipt)
+    self.promise = gkiosaApiUtilities.deleteReceipt(receipt);
     if (self.promise) {
       self.promise.then(
         () => $state.go('receipts.all', {vector: self.vector})
