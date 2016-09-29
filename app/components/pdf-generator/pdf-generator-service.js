@@ -15,7 +15,7 @@ function gkiosaPdfGenerator() {
     return {
       open: (data) => pdfMake.createPdf(ddGenerator(data)).open(),
       print: (data) => pdfMake.createPdf(ddGenerator(data)).print(),
-      download: (data) => pdfMake.createPdf(ddGenerator(data)).download()
+      download: (filename, data) => pdfMake.createPdf(ddGenerator(data)).download(filename)
     };
   }
 }

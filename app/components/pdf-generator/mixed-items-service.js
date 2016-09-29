@@ -117,7 +117,7 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
 
   function createInvoice(item) {
     const invoice = [
-      item.date,
+      $filter('date')(item.date, 'd/M/yyyy'),
       `ΤΙΜΟΛΟΓΙΟ - ${item.name}`,
       item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0,
       item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0,
@@ -151,7 +151,7 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
 
   function createReceipt(item) {
     return [
-      item.date,
+      $filter('date')(item.date, 'd/M/yyyy'),
       `ΑΠΟΔΕΙΞΗ - ${item.name}`,
       item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0,
       item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0,

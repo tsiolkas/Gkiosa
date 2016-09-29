@@ -12,7 +12,7 @@ angular.module('gkiosa.app.sections.receipts.receipt', [
     getBreadcrumbName: params => [
         {
           sref: `receipts.all({vector: '${params.vector}'})`,
-          name: params.vector === 'SUPPLIERS' ? 'Απόδείξης αγοράς' : 'Απόδείξης πώλησης'
+          name: params.vector === 'SUPPLIERS' ? 'Απόδείξης πληρωμής' : 'Απόδείξης είσπραξης'
         },
         {
           name: params.receiptId === 'new' ? 'Δημιουργία νέας' : params.name

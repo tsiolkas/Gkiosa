@@ -137,13 +137,13 @@ function AppController($rootScope, $scope, $state) {
     },
     {
       sref: "receipts.all({vector: 'CUSTOMERS'})",
-      name: 'Αποδείξεις πώλησης',
+      name: 'Αποδείξεις είσπραξης',
       icon: 'fa-th-large',
       id: 'receipts.all.customers'
     },
     {
       sref: "receipts.all({vector: 'SUPPLIERS'})",
-      name: 'Αποδείξεις αγοράς',
+      name: 'Αποδείξεις πληρωμής',
       icon: 'fa-th-large',
       id: 'receipts.all.suppliers'
     },

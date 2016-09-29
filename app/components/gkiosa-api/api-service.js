@@ -187,8 +187,8 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
       .then((resp) => {
         _.each(resp.results, invoice => {
           _.each(invoice.products, product => {
-            product.getPrice = () => math.eval(`${product.price} * ${product.quantity}`).toNumber();
-            product.getVatPrice = () => math.eval(`${product.price} * ${product.quantity} * ((${product.vat} / 100) + 1)`).toNumber();
+            product.getPrice = () => math.do(`${product.price} * ${product.quantity}`);
+            product.getVatPrice = () => math.do(`${product.price} * ${product.quantity} * ((${product.vat} / 100) + 1)`);
           });
           invoice.getTotalPrice = () => _.sumBy(invoice.products, p => p.getPrice());
           invoice.getTotalVatPrice = () => _.sumBy(invoice.products, p => p.getVatPrice());
@@ -201,7 +201,7 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
     return createSimpleCrudFindAll('receipts')(find, pagination, sort)
       .then((resp) => {
         _.each(resp.results, receipt => {
-          receipt.getTotalPrice = () => math.eval(`${receipt.bank} + ${receipt.cash} + ${receipt.check}`).toNumber();
+          receipt.getTotalPrice = () => math.do(`${receipt.bank} + ${receipt.cash} + ${receipt.check}`);
           receipt.getTotalVatPrice = receipt.getTotalPrice;
         });
         return resp;
@@ -233,10 +233,10 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
       _.each(mixed, item => {
         const progressive = {};
 
-        progressive[item.vector] = item.getTotalVatPrice() + (prevItem ? prevItem.progressive[item.vector] : 0);
+        progressive[item.vector] = math.do(`${item.getTotalVatPrice()} + ${(prevItem ? prevItem.progressive[item.vector] : 0)}`);
         const opposite = item.vector === 'SUPPLIERS' ? 'CUSTOMERS' : 'SUPPLIERS';
         progressive[opposite] = prevItem ? prevItem.progressive[opposite] : 0;
-        progressive['TOTAL'] = math.eval(`${progressive['SUPPLIERS']} - ${progressive['CUSTOMERS']}`).toNumber();
+        progressive['TOTAL'] = math.do(`${progressive['SUPPLIERS']} - ${progressive['CUSTOMERS']}`);
 
         item.progressive = progressive;
         prevItem = item;

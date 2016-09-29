@@ -128,7 +128,7 @@ function gkiosaApiUtilities($rootScope, $q, $state, $ngBootbox, toastr, gkiosaAp
             if(!_.isEmpty(invoices) || !_.isEmpty(receipts)) {
               const rval = receipts ? receipts.TOTAL[vector] : 0;
               const ival = invoices ? invoices[vector] : 0;
-              const total =rval + ival;
+              const total = rval + ival;
               summaries.push({ invoices, receipts, total, user });
             }
           },

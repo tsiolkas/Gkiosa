@@ -33,11 +33,14 @@
   <div class="row" ng-show="mixedItemsCtrl.mixedItemsTable.total()">
     <div class="col-lg-9">
       <div class="well well-sm padding-8">
-        <button type="button" ng-click="mixedItemsCtrl.generatePdf()" class="btn btn-social btn-primary" title="Δημιουργία pdf">
+        <button ng-if="mixedItemsCtrl.ctx.isBrowser()" type="button" ng-click="mixedItemsCtrl.generatePdf()" class="btn btn-social btn-primary" title="Δημιουργία pdf">
           <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
         </button>
-        <button type="button" ng-click="mixedItemsCtrl.printPdf()" class="btn btn-social btn-primary" title="Εκτύπωση pdf">
+        <button ng-if="mixedItemsCtrl.ctx.isBrowser()" type="button" ng-click="mixedItemsCtrl.printPdf()" class="btn btn-social btn-primary" title="Εκτύπωση pdf">
           <i class="fa fa-print" aria-hidden="true"></i>
+        </button>
+        <button type="button" ng-click="mixedItemsCtrl.downloadPdf()" class="btn btn-social btn-primary" title="Κατέβασμα pdf">
+          <i class="fa fa-download" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -65,9 +68,9 @@
           <td title="'Χρέωση'" >{{row.raw.vector === 'CUSTOMERS' ? row.getTotalVatPrice() : 0}}</td>
           <td title="'Πίστωση'" >{{row.raw.vector === 'SUPPLIERS' ? row.getTotalVatPrice() : 0}}</td>
 
-          <td title="'Προδ. Χρέωση'" >{{row.progressive['CUSTOMERS']}}</td>
-          <td title="'Προδ. Πίστωση'" >{{row.progressive['SUPPLIERS']}}</td>
-          <td title="'Προδ. Σύνολο'" >{{row.progressive['TOTAL'] < 0 ? -1 * row.progressive['TOTAL'] : row.progressive['TOTAL']}}</td>
+          <td title="'Προοδ. Χρέωση'" >{{row.progressive['CUSTOMERS']}}</td>
+          <td title="'Προοδ. Πίστωση'" >{{row.progressive['SUPPLIERS']}}</td>
+          <td title="'Προοδ. Σύνολο'" >{{row.progressive['TOTAL'] < 0 ? -1 * row.progressive['TOTAL'] : row.progressive['TOTAL']}}</td>
         </tr>
       </table>
       <hr ng-hide="mixedItemsCtrl.mixedItemsTable.total()">

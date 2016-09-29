@@ -6,7 +6,15 @@ angular.module('gkiosa.app.sections.mixedItems')
 
 .controller('MixedItemsController', MixedItemsController);
 
-function MixedItemsController($scope, $state, $stateParams, gkiosaPdfGeneratorMixedItems, gkiosaApi, gkiosaPagination) {
+function MixedItemsController(
+  $scope,
+  $state,
+  $stateParams,
+  gkiosaPdfGeneratorMixedItems,
+  gkiosaContext,
+  gkiosaApi,
+  gkiosaPagination
+) {
   const self = this;
 
   const dto = (new Date).getTime();
@@ -17,9 +25,11 @@ function MixedItemsController($scope, $state, $stateParams, gkiosaPdfGeneratorMi
   self.mixedItemsTable = undefined;
   self.allUsers = undefined;
   self.userId = undefined;
+  self.ctx = gkiosaContext;
   self.date = dateRange;
   self.generatePdf = generatePdf;
   self.printPdf = printPdf;
+  self.downloadPdf = downloadPdf;
 
   self.openItem = openItem;
 
@@ -57,7 +67,16 @@ function MixedItemsController($scope, $state, $stateParams, gkiosaPdfGeneratorMi
   function printPdf() {
     gkiosaPdfGeneratorMixedItems.print({
       mixedItems: self.mixedItemsTable.data,
-      user: _.find(self.allUsers, u => u._id === self.userId)
+      user: _.find(self.allUsers, u => u._id === self.userId),
+      dateRange: self.date
+    });
+  }
+
+  function downloadPdf() {
+    gkiosaPdfGeneratorMixedItems.download('kartela.pdf', {
+      mixedItems: self.mixedItemsTable.data,
+      user: _.find(self.allUsers, u => u._id === self.userId),
+      dateRange: self.date
     });
   }
 
