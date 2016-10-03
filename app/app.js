@@ -101,70 +101,6 @@ angular.module('gkiosa.app', [
 function AppController($rootScope, $scope, $state, gkiosaInitApp) {
   const self = this;
 
-<<<<<<< HEAD
-  self.sidebarMenu = [
-    {
-      sref: "dashboard",
-      name: 'Πίνακας ελέγχου',
-      icon: 'fa-th-large',
-      id: 'dashboard'
-    },
-    {
-      sref: "mixedItems",
-      name: 'Αναζήτηση',
-      icon: 'fa-th-large',
-      id: 'mixedItems'
-    },
-    {
-      sref: "users.all({vector: 'CUSTOMERS'})",
-      name: 'Πελάτες',
-      icon: 'fa-th-large',
-      id: 'users.all.customers'
-    },
-    {
-      sref: "users.all({vector: 'SUPPLIERS'})",
-      name: 'Προμηθευτές',
-      icon: 'fa-th-large',
-      id: 'users.all.suppliers'
-    },
-    {
-      sref: "invoices.all({vector: 'CUSTOMERS'})",
-      name: 'Τιμολόγια πώλησης',
-      icon: 'fa-th-large',
-      id: 'invoices.all.customers'
-    },
-    {
-      sref: "invoices.all({vector: 'SUPPLIERS'})",
-      name: 'Τιμολόγια αγοράς',
-      icon: 'fa-th-large',
-      id: 'invoices.all.suppliers'
-    },
-    {
-      sref: "receipts.all({vector: 'CUSTOMERS'})",
-      name: 'Αποδείξεις είσπραξης',
-      icon: 'fa-th-large',
-      id: 'receipts.all.customers'
-    },
-    {
-      sref: "receipts.all({vector: 'SUPPLIERS'})",
-      name: 'Αποδείξεις πληρωμής',
-      icon: 'fa-th-large',
-      id: 'receipts.all.suppliers'
-    },
-    {
-      sref: "products.all({vector: 'CUSTOMERS'})",
-      name: 'Προιόντα πώλησης',
-      icon: 'fa-th-large',
-      id: 'products.all.customers'
-    },
-    {
-      sref: "products.all({vector: 'SUPPLIERS'})",
-      name: 'Προιόντα αγοράς',
-      icon: 'fa-th-large',
-      id: 'products.all.suppliers'
-    }
-  ];
-
   gkiosaInitApp.init();
 
   self.sidebarMenu = getSidebarMenu();
@@ -233,13 +169,13 @@ function AppController($rootScope, $scope, $state, gkiosaInitApp) {
       },
       {
         sref: "receipts.all({vector: 'CUSTOMERS'})",
-        name: 'Αποδείξεις πώλησης',
+        name: 'Αποδείξεις είσπραξης',
         icon: 'fa-th-large',
         id: 'receipts.all.customers'
       },
       {
         sref: "receipts.all({vector: 'SUPPLIERS'})",
-        name: 'Αποδείξεις αγοράς',
+        name: 'Αποδείξεις πληρωμής',
         icon: 'fa-th-large',
         id: 'receipts.all.suppliers'
       },
