@@ -68,12 +68,12 @@
           <td title="'Ημερομηνία'" filter="{date: 'text'}" sortable="'date'">
             {{row.date | date: 'd/M/yyyy HH:mm:ss'}}
           </td>
-          <td title="'Χρέωση'" >{{row.raw.vector === 'CUSTOMERS' ? row.getTotalVatPrice() : 0}}</td>
-          <td title="'Πίστωση'" >{{row.raw.vector === 'SUPPLIERS' ? row.getTotalVatPrice() : 0}}</td>
+          <td title="'Χρέωση'" >{{row.ammount.charge}}</td>
+          <td title="'Πίστωση'" >{{row.ammount.credit}}</td>
 
-          <td title="'Προοδ. Χρέωση'" >{{row.progressive['CUSTOMERS']}}</td>
-          <td title="'Προοδ. Πίστωση'" >{{row.progressive['SUPPLIERS']}}</td>
-          <td title="'Προοδ. Σύνολο'" >{{row.progressive['TOTAL'] < 0 ? -1 * row.progressive['TOTAL'] : row.progressive['TOTAL']}}</td>
+          <td title="'Προοδ. Χρέωση'" >{{row.progressive.charge}}</td>
+          <td title="'Προοδ. Πίστωση'" >{{row.progressive.credit}}</td>
+          <td title="'Προοδ. Σύνολο'" >{{row.progressive.total < 0 ? -1 * row.progressive.total : row.progressive.total}}</td>
         </tr>
       </table>
       <hr ng-hide="mixedItemsCtrl.mixedItemsTable.total()">

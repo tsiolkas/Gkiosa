@@ -117,11 +117,11 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
     const invoice = [
       gksDate(item.date),
       `ΤΙΜΟΛΟΓΙΟ - ${item.name}`,
-      gksEuro(item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0),
-      gksEuro(item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0),
-      gksEuro(item.progressive['CUSTOMERS']),
-      gksEuro(item.progressive['SUPPLIERS']),
-      gksEuro(Math.abs(item.progressive['TOTAL']))
+      gksEuro(item.ammount.charge),
+      gksEuro(item.ammount.credit),
+      gksEuro(item.progressive.charge),
+      gksEuro(item.progressive.credit),
+      gksEuro(Math.abs(item.progressive.total))
     ].map(t => ({ text: t, style: 'mixedItem'}));
 
     const header = [
@@ -151,11 +151,11 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
     return [
       gksDate(item.date),
       `ΑΠΟΔΕΙΞΗ - ${item.name}`,
-      gksEuro(item.raw.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0),
-      gksEuro(item.raw.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0),
-      gksEuro(item.progressive['CUSTOMERS']),
-      gksEuro(item.progressive['SUPPLIERS']),
-      gksEuro(Math.abs(item.progressive['TOTAL']))
+      gksEuro(item.ammount.charge),
+      gksEuro(item.ammount.credit),
+      gksEuro(item.progressive.charge),
+      gksEuro(item.progressive.credit),
+      gksEuro(Math.abs(item.progressive.total))
     ].map(t => ({ text: t, style: 'mixedItem'}));
   }
 

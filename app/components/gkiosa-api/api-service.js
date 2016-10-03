@@ -255,17 +255,42 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
 
       const mixed = _.sortBy((invoices || []).concat(receipts || []), 'date');
       const mixedItems = [];
-      let prevItem;
+      let prevItem = {
+        progressive: {
+          charge: 0,
+          credit: 0,
+          total: 0
+        }
+      };
       _.each(mixed, item => {
         const progressive = {};
+        item.isInvoice = _.has(item, 'products');
 
-        progressive[item.vector] = math.do(`${item.getTotalVatPrice()} + ${(prevItem ? prevItem.progressive[item.vector] : 0)}`);
-        const opposite = item.vector === 'SUPPLIERS' ? 'CUSTOMERS' : 'SUPPLIERS';
-        progressive[opposite] = prevItem ? prevItem.progressive[opposite] : 0;
-        progressive['TOTAL'] = math.do(`${progressive['SUPPLIERS']} - ${progressive['CUSTOMERS']}`);
+        item.ammount = {
+          charge: item.vector === 'CUSTOMERS' ? item.getTotalVatPrice() : 0,
+          credit: item.vector === 'SUPPLIERS' ? item.getTotalVatPrice() : 0
+        };
 
-        item.progressive = progressive;
+        item.progressive = {
+          charge: math.do(`${item.ammount.charge} + ${prevItem.progressive.charge}`),
+          credit: math.do(`${item.ammount.credit} + ${prevItem.progressive.credit}`),
+          total: math.do(`${prevItem.progressive.credit} - ${prevItem.progressive.charge}`)
+        };
+
         prevItem = item;
+
+        // if (prevItem.isInvoice && prevItem.vector === 'SUPPLIERS'
+        //     || !prevItem.isInvoice && prevItem.vector === 'SUPPLIERS') {
+
+        // }
+
+        // progressive[item.vector] = math.do(`${item.getTotalVatPrice()} + ${(prevItem ? prevItem.progressive[item.vector] : 0)}`);
+        // const opposite = item.vector === 'SUPPLIERS' ? 'CUSTOMERS' : 'SUPPLIERS';
+        // progressive[opposite] = prevItem ? prevItem.progressive[opposite] : 0;
+        // progressive['TOTAL'] = math.do(`${progressive['SUPPLIERS']} - ${progressive['CUSTOMERS']}`);
+
+        // item.progressive = progressive;
+        // prevItem = item;
 
         // We fetch only the dates than toDate, no need for
         // && item.date.getTime() <= toDate.getTime()
@@ -279,18 +304,20 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
 
     function createMixedItem(item) {
       let type;
-      if (_.has(item, 'products')) {
+      let name;
+      if (item.isInvoice) {
         type = {
           id: 'invoice',
           name: 'τιμολόγιο'
         };
+        name = item.invoiceNum;
       } else {
         type = {
           id: 'receipt',
           name: 'απόδειξη'
         };
+        name = item.receiptNum;
       }
-      const name = type.id === 'invoice' ? item.invoiceNum : item.receiptNum;
       return {
         type,
         name,
@@ -298,6 +325,7 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
         date: item.date,
         getTotalVatPrice: item.getTotalVatPrice,
         progressive: item.progressive,
+        ammount: item.ammount,
         raw: item
       }
     }
