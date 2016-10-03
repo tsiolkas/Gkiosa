@@ -279,21 +279,6 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
 
         prevItem = item;
 
-        // if (prevItem.isInvoice && prevItem.vector === 'SUPPLIERS'
-        //     || !prevItem.isInvoice && prevItem.vector === 'SUPPLIERS') {
-
-        // }
-
-        // progressive[item.vector] = math.do(`${item.getTotalVatPrice()} + ${(prevItem ? prevItem.progressive[item.vector] : 0)}`);
-        // const opposite = item.vector === 'SUPPLIERS' ? 'CUSTOMERS' : 'SUPPLIERS';
-        // progressive[opposite] = prevItem ? prevItem.progressive[opposite] : 0;
-        // progressive['TOTAL'] = math.do(`${progressive['SUPPLIERS']} - ${progressive['CUSTOMERS']}`);
-
-        // item.progressive = progressive;
-        // prevItem = item;
-
-        // We fetch only the dates than toDate, no need for
-        // && item.date.getTime() <= toDate.getTime()
         if (item.date.getTime() >= fromDate.getTime()) {
           mixedItems.push(createMixedItem(item));
         }
