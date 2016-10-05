@@ -6,19 +6,31 @@ angular.module('gkiosa.app.sections.invoices.invoice')
 
 .controller('InvoiceController', InvoiceController);
 
-function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gkiosaPagination, gkiosaApi, gkiosaApiUtilities) {
-  const self = this;
-
+function InvoiceController(
+  $rootScope,
+  $scope,
+  $state,
+  $stateParams,
+  toastr,
+  gkiosaPagination,
+  gkiosaApi,
+  gkiosaApiUtilities,
+  gkiosaContext,
+  gkiosaPdfGeneratorInvoice
+) {
   let editedProductId;
-  _.assignIn(self, {
-    vector: $stateParams.vector,
-    isNew: $stateParams.invoiceId === 'new',
-    invoiceId: $stateParams.invoiceId === 'new' ? undefined : $stateParams.invoiceId,
-    newProduct: undefined,
-    invoiceProductsTableParams: undefined,
-    invoice: undefined,
-    appInfo: undefined,
 
+  const self = this;
+  self.vector = $stateParams.vector,
+  self.isNew = $stateParams.invoiceId === 'new';
+  self.invoiceId = $stateParams.invoiceId === 'new' ? undefined : $stateParams.invoiceId;
+  self.newProduct = undefined;
+  self.invoiceProductsTableParams = undefined;
+  self.invoice = undefined;
+  self.appInfo = undefined;
+  self.ctx = gkiosaContext;
+
+  _.assignIn(self, {
     createInvoice,
     updateInvoice,
     deleteInvoice,
@@ -26,7 +38,10 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
     editProduct,
     isProductEdited,
     isItemInvalid,
-    isProductInvalid
+    isProductInvalid,
+    generatePdf,
+    printPdf,
+    downloadPdf
   });
 
   init();
@@ -136,6 +151,18 @@ function InvoiceController($rootScope, $scope, $state, $stateParams, toastr, gki
     self.invoice.products = products;
     self.invoiceProductsTableParams.reload();
     _.defer(() => editProduct(newProduct));
+  }
+
+  function generatePdf() {
+    gkiosaPdfGeneratorInvoice.open();
+  }
+
+  function printPdf() {
+    gkiosaPdfGeneratorInvoice.print();
+  }
+
+  function downloadPdf() {
+    gkiosaPdfGeneratorInvoice.download('timologio.pdf');
   }
 
 }
