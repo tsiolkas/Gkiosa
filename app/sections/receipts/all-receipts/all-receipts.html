@@ -11,16 +11,15 @@
   <div class="col-xs-12" cg-busy="allReceiptsCtrl.promise">
     <table ng-show="allReceiptsCtrl.receiptsTableParams.total()" ng-table="allReceiptsCtrl.receiptsTableParams" show-filter="true" class="table table-bordered table-striped">
       <colgroup>
-        <col width="15%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="10%" />
-        <col width="5%" />
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="90px" />
       </colgroup>
       <tr ng-repeat="row in $data track by row._id">
         <td title="'Χρήστης'" filter="{'userId': 'components/table-custom-filters/select-user.html'}" sortable="'user.name'">
@@ -32,9 +31,10 @@
         <td title="'Ημερομηνία'" filter="{date: 'components/table-custom-filters/date.html'}" sortable="'date'">{{row.date | date: 'd/M/yyyy HH:mm:ss'}}</td>
         <td title="'Κωδ.'" filter="{uniqId: 'number'}" sortable="'uniqId'">{{row.uniqId}}</td>
         <td title="'Τίτλος'" filter="{receiptNum: 'text'}" sortable="'receiptNum'">{{row.receiptNum}}</td>
-        <td title="'Κατάθεση'" filter="{bank: 'number'}" sortable="'bank'">{{row.bank}}</td>
+        <td title="'Κατάθεση/Μετρητά/Επιταγή'">{{row.bank}}/{{row.cash}}/{{row.check}}</td>
+<!--         <td title="'Κατάθεση'" filter="{bank: 'number'}" sortable="'bank'">{{row.bank}}</td>
         <td title="'Μετρητά'" filter="{cash: 'number'}" sortable="'cash'">{{row.cash}}</td>
-        <td title="'Επιταγή'" filter="{check: 'number'}" sortable="'check'">{{row.check}}</td>
+        <td title="'Επιταγή'" filter="{check: 'number'}" sortable="'check'">{{row.check}}</td> -->
         <td title="'Σύνολο'">{{row.getTotalPrice()}}</td>
         <td title="'Σχόλιο'" filter="{commend: 'text'}" sortable="'commend'">{{row.commend}}</td>
         <td>

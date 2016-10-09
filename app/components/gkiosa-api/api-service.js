@@ -19,7 +19,7 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
 
   // insertFakeDocuments();
 
-  const retVal = {
+  const api = {
     getUserDependencies,
     getMixedItems,
     getAllData,
@@ -32,8 +32,10 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
     updateUser,
     deleteUser: createSimpleCrudDelete('users'),
 
-    findProduct: createSimpleCrudFind('products'),
-    findAllProducts: createSimpleCrudFindAll('products'),
+    // findProduct: createSimpleCrudFind('products'),
+    // findAllProducts: createSimpleCrudFindAll('products'),
+    findProduct: findProduct,
+    findAllProducts: findAllProducts,
     createProduct: createSimpleCrudCreate('products'),
     updateProduct: createSimpleCrudUpdate('products'),
     deleteProduct: createSimpleCrudDelete('products'),
@@ -44,7 +46,8 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
     updateReceipt: createCrudUpdateWithUserId('receipts'),
     deleteReceipt: createSimpleCrudDelete('receipts'),
 
-    findInvoice: createSimpleCrudFind('invoices'),
+    // findInvoice: createSimpleCrudFind('invoices'),
+    findInvoice,
     findAllInvoices,
     createInvoice: createCrudCreateWithUserId('invoices'),
     updateInvoice: createCrudUpdateWithUserId('invoices'),
@@ -56,7 +59,7 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
     deleteAppInfo: createSimpleCrudDelete('appinfo'),
   };
 
-  return retVal;
+  return api;
 
   function getDBDriver() {
     if (gkiosaContext.isDesktop()) {
@@ -191,24 +194,53 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
       .then(createSimpleCrudUpdate('users')(userId, user))
   }
 
+  function addMetainfoToProduct(product) {
+    product.price = product.price || 0;
+    product.quantity = product.quantity || 0;
+    // function instend of arrow function for inheritance
+    product.getPrice = function() { return math.do(`${this.price} * ${this.quantity}`); };
+    product.getVatPrice = function() { return math.do(`${this.price} * ${this.quantity} * ((${this.vat} / 100) + 1)`); };
+    product.getVat = function() { return math.do(`${this.getVatPrice()} - ${this.getPrice()}`); };
+  }
+
+  function addMetainfoToInvoice(invoice) {
+    _.each(invoice.products, p => addMetainfoToProduct(p));
+    // function instend of arrow function for inheritance
+    invoice.getTotalPrice = function() { return _.reduce(this.products, (sum, p) => math.do(`${sum} + ${p.getPrice()}`), 0); };
+    invoice.getTotalVat = function() { return _.reduce(this.products, (sum, p) => math.do(`${sum} + ${p.getVat()}`), 0); };
+    invoice.getTotalVatPrice = function() { return _.reduce(this.products, (sum, p) => math.do(`${sum} + ${p.getVatPrice()}`), 0); };
+    return invoice;
+  }
+
+  function findInvoice(id) {
+    return createSimpleCrudFind('invoices')(id)
+      .then(i => addMetainfoToInvoice(i));
+  }
+
   function findAllInvoices(find, pagination, sort) {
     return createSimpleCrudFindAll('invoices')(find, pagination, sort)
-      .then((resp) => {
-        _.each(resp.results, invoice => {
-          _.each(invoice.products, product => {
-            product.getPrice = () => math.do(`${product.price} * ${product.quantity}`);
-            product.getVatPrice = () => math.do(`${product.price} * ${product.quantity} * ((${product.vat} / 100) + 1)`);
-          });
-          invoice.getTotalPrice = () => _.reduce(invoice.products, (sum, p) => math.do(`${sum} + ${p.getPrice()}`), 0);
-          invoice.getTotalVatPrice = () => _.reduce(invoice.products, (sum, p) => math.do(`${sum} + ${p.getVatPrice()}`), 0);
-        });
+      .then(resp => {
+        _.each(resp.results, i => addMetainfoToInvoice(i));
+        return resp;
+      });
+  }
+
+  function findProduct(id) {
+    return createSimpleCrudFind('products')(id)
+      .then(p => addMetainfoToProduct(p));
+  }
+
+  function findAllProducts(find, pagination, sort) {
+    return createSimpleCrudFindAll('products')(find, pagination, sort)
+      .then(resp => {
+        _.each(resp.results, p => addMetainfoToProduct(p));
         return resp;
       });
   }
 
   function findAllReceipts(find, pagination, sort) {
     return createSimpleCrudFindAll('receipts')(find, pagination, sort)
-      .then((resp) => {
+      .then(resp => {
         _.each(resp.results, receipt => {
           receipt.getTotalPrice = () => math.do(`${receipt.bank} + ${receipt.cash} + ${receipt.check}`);
           receipt.getTotalVatPrice = receipt.getTotalPrice;
@@ -224,13 +256,14 @@ function gkiosaApi($q, toastr, gkiosaContext, gkiosaConfig) {
         if (appInfo) {
           appInfo.increaseInvoice = () => {
             ++appInfo.invoiceId;
-            return retVal.updateAppInfo(appInfo._id, appInfo);
+            return api.updateAppInfo(appInfo._id, appInfo);
           };
           appInfo.increaseReceipt = () => {
             ++appInfo.receiptId;
-            return retVal.updateAppInfo(appInfo._id, appInfo);
+            return api.updateAppInfo(appInfo._id, appInfo);
           };
         }
+        return appInfo;
       });
   }
 

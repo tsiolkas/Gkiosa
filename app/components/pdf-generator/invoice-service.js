@@ -12,55 +12,129 @@ function gkiosaPdfGeneratorInvoice($filter, gkiosaPdfGenerator) {
 
   return gkiosaPdfGenerator.generatePdfMethods(generateDD);
 
-  function generateDD() {
+  function generateDD(data) {
 
-    const header = createHeader();
-    const userInfo = createUserInfo();
-    const content = createContent();
+    const header = createHeader(data.invoice);
+    const userInfo = createUserInfo(data.user);
+    const content = createContent(data.invoice);
+    const styles = getStyles();
 
     const dd = {
       content: [
         header,
-        userInfo//,
-        // content
-      ]
+        userInfo,
+        content
+      ],
+      styles
     };
 
     return dd;
   }
 
-  function createHeader() {
+  function createHeader(invoice) {
+    const now = gksDate(new Date());
     return {
       columns: [
         {
-          text: 'ΤΙΜΟΛΟΓΙΟ - ΔΕΛΤΙΟ ΑΠΟΣΤΟΛΗΣ',
-          width: 200
+          text: invoice.invoiceNum,
+          width: 400
         },
         {
-          text: '169    11/23/2012',
+          text: `${invoice.uniqId}     ${now}`,
           width: 200
         }
       ]
     };
   }
 
-  function createUserInfo() {
+  function createUserInfo(user) {
+    const info = _.transform([
+      ['Επωνημία', user.name],
+      ['Κωδικός', user.code],
+      ['Επάγγελμα', user.profession],
+      ['Διεύθυνση', user.address],
+      ['Α.Φ.Μ.', user.vat],
+      ['Δ.Ο.Υ', user.taxAuthority],
+      ['Τηλέφωνο', user.phone || '-'],
+      ['', ''],
+      ['', '']
+    ], (body, info, idx) => {
+      if (idx % 3 === 0) {
+        body.push([]);
+      }
+      const lastBody = _.last(body);
+      lastBody.push(info[0]);
+      lastBody.push({ text: _.toString(info[1]), style: 'useDetail'});
+    }, []);
+
     return {
       table: {
-        widths: ['*', '*', '*', '*'],
-        body: [
-          [ 'Μαυροπουλος', 'EYROCATERING AE', 'ΕΜΠΟΡΙΟ', 'Δ50'],
-          [ 'ΡΕΝΤΗΣ', '2102447583', '099004349', 'ΜΟΣΧΑΤΟΥ']
-        ]
+        headerRows: 1,
+        widths: ['*', 'auto', '*', '*', '*', '*'],
+        body: info
       },
-      layout: 'noBorders'
+      margin: [0, 15],
+      layout: createUserInfoLayout()
     };
   }
 
-  function createContent() {
-
+  function createContent(invoice) {
+    const header = [
+        'Κωδικός',
+        'Όνομα',
+        'Ποσότητα',
+        'Τιμή',
+        'Σύνολο',
+        'Φ.Π.Α.',
+        'Σύνολο Φ.Π.Α'
+      ];
+    const ddProducts = _.map(invoice.products, p => {
+      return _.map([
+        p.productId,
+        p.name,
+        p.quantity,
+        p.price,
+        p.getPrice(),
+        `${p.vat}%`,
+        p.getVatPrice()
+      ], _.toString);
+    });
+    const sum = [
+      invoice.getTotalPrice(),
+      invoice.getTotalVat(),
+      invoice.getTotalVatPrice()
+    ];
+    const body = [header].concat(ddProducts);
+    return {
+      table: {
+        body
+      },
+      widths: ['*', '*', '*', '*', '*', '*', '*'],
+      layout: createContentLayout()
+    };
   }
 
+  function createUserInfoLayout() {
+    return {
+      hLineWidth: (i, node) => (i === 0 || i === node.table.body.length) ? 1 : 0,
+      vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length) ? 1 : 0
+     };
+  }
+
+  function createContentLayout() {
+    return {
+      hLineWidth: (i, node) => (i === 0 || i === 1 || i === node.table.body.length) ? 1 : 0,
+      vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length) ? 1 : 0
+     };
+  }
+
+  function getStyles() {
+    return {
+      useDetail: {
+        bold: true
+      }
+    };
+  }
 }
 
 })();

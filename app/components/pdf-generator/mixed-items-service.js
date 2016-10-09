@@ -82,24 +82,23 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
   }
 
   function createUserInfo(user) {
-    const userInfoLayout = createUserInfoLayout();
     const info = _.transform([
       ['Κωδικός', user.code],
       ['Επάγγελμα', user.profession],
-      ['Τηλέφωνο', '-'],
+      ['Τηλέφωνο', user.phone || '-'],
       ['Επωνημία', user.name],
       ['Δ.Ο.Υ', user.taxAuthority],
-      ['Κινητό', '-'],
       ['Διεύθυνση', user.address],
       ['Α.Φ.Μ.', user.vat],
-      ['Αποπληρωμή', '-']
+      ['', ''],
+      ['', '']
     ], (body, info, idx) => {
       if (idx % 3 === 0) {
         body.push([]);
       }
       const lastBody = _.last(body);
       lastBody.push(info[0]);
-      lastBody.push({ text: info[1], style: 'useDetail'});
+      lastBody.push({ text: _.toString(info[1]), style: 'useDetail'});
     }, []);
 
     return {
@@ -109,7 +108,7 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
         body: info
       },
       margin: [0, 8],
-      layout: userInfoLayout
+      layout: createUserInfoLayout()
     };
   }
 
@@ -191,35 +190,19 @@ function gkiosaPdfGeneratorMixedItems($filter, gkiosaPdfGenerator) {
 
   function createUserInfoLayout() {
     return {
-      hLineWidth: function(i, node) {
-        return (i === 0 || i === node.table.body.length) ? 1 : 0;
-      },
-      vLineWidth: function(i, node) {
-        return (i === 0 || i === node.table.widths.length) ? 1 : 0;
-      },
-      hLineColor: function(i, node) {
-        return (i === 0 || i === 1 || i === node.table.body.length) ? 'black' : 'gray';
-      },
-      vLineColor: function(i, node) {
-        return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-      }
+      hLineWidth: (i, node) => (i === 0 || i === node.table.body.length) ? 1 : 0,
+      vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length) ? 1 : 0,
+      hLineColor: (i, node) => (i === 0 || i === 1 || i === node.table.body.length) ? 'black' : 'gray',
+      vLineColor: (i, node) => (i === 0 || i === node.table.widths.length) ? 'black' : 'gray'
      };
   }
 
   function createContentLayout() {
     return {
-      hLineWidth: function(i, node) {
-        return (i === 0 || i === 1 || i === 2 || i === node.table.body.length) ? 1 : 0;
-      },
-      vLineWidth: function(i, node) {
-        return (i === 0 || i === node.table.widths.length) ? 1 : 0;
-      },
-      hLineColor: function(i, node) {
-        return (i === 0 || i === 1 || i === node.table.body.length) ? 'black' : 'gray';
-      },
-      vLineColor: function(i, node) {
-        return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-      }
+      hLineWidth: (i, node) => (i === 0 || i === 1 || i === 2 || i === node.table.body.length) ? 1 : 0,
+      vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length) ? 1 : 0,
+      hLineColor: (i, node) => (i === 0 || i === 1 || i === node.table.body.length) ? 'black' : 'gray',
+      vLineColor: (i, node) => (i === 0 || i === node.table.widths.length) ? 'black' : 'gray'
      };
   }
 }

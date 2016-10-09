@@ -11,13 +11,15 @@
   <div class="col-xs-12" cg-busy="allInvoicesCtrl.promise">
     <table ng-show="allInvoicesCtrl.invoicesTableParams.total()" ng-table="allInvoicesCtrl.invoicesTableParams" show-filter="true" class="els-all-receipts table table-bordered table-striped table-hover">
       <colgroup>
-        <!--<col width="25%" />-->
-        <!--<col width="15%" />-->
-        <!--<col width="15%" />-->
-        <!--<col width="15%" />-->
-        <!--<col width="15%" />-->
-        <!--<col width="5%" />-->
-        <!--<col width="10%" />-->
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="10px" />
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="*" />
+        <col width="90px" />
       </colgroup>
       <tr ng-repeat-start="row in $data track by row._id">
         <td title="'Χρήστης'" filter="{'userId': 'components/table-custom-filters/select-user.html'}" sortable="'user.name'">
@@ -39,8 +41,7 @@
           {{row.products.length}}
           <button type="button" ng-click="allInvoicesCtrl.expandInvoice($index, row)" class="btn btn-default btn-xs" title="Προιόντα"><i class="fa fa-chevron-down"></i></button>
         </td>
-        <td title="'Σύνολο'">{{row.getTotalPrice()}}</td>
-        <td title="'Σύνολο (Φ.Π.Α)'">{{row.getTotalVatPrice()}}</td>
+        <td title="'Σύνολο/Σύνολο (Φ.Π.Α)'">{{row.getTotalPrice()}}/{{row.getTotalVatPrice()}}</td>
         <td>
           <button type="button" ng-click="allInvoicesCtrl.editInvoice(row)" class="btn btn-primary btn-sm" title="Επεξεργασία"><i class="fa fa-pencil"></i></button>
           <button type="button" ng-click="allInvoicesCtrl.deleteInvoice(row)" class="btn btn-danger btn-sm" title="Διαγραφή"><i class="fa fa-trash-o"></i></button>

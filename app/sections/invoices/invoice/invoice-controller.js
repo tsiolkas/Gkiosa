@@ -18,7 +18,7 @@ function InvoiceController(
   gkiosaContext,
   gkiosaPdfGeneratorInvoice
 ) {
-  let editedProductId;
+  let editedProduct;
 
   const self = this;
   self.vector = $stateParams.vector,
@@ -100,7 +100,7 @@ function InvoiceController(
   }
 
   function warningIfProductEdit() {
-    if (editedProductId) {
+    if (editedProduct) {
       return confirm('Επεξεργάζεστε ένα προιόν, αν δεν το αποθηκέυσετε οι αλλαγές σας θα χαθούν.\nΘέλετε να συνεχίσετε?');
     }
     return true;
@@ -125,11 +125,11 @@ function InvoiceController(
   }
 
   function editProduct(product) {
-    editedProductId = isProductEdited(product) ? undefined : product._id;
+    editedProduct = isProductEdited(product) ? undefined : product;
   }
 
   function isProductEdited(product) {
-    return editedProductId === product._id;
+    return editedProduct === product;
   }
 
   function isProductInvalid(product) {
@@ -154,15 +154,15 @@ function InvoiceController(
   }
 
   function generatePdf() {
-    gkiosaPdfGeneratorInvoice.open();
+    gkiosaPdfGeneratorInvoice.open({invoice: self.invoice, user: self.invoice.user});
   }
 
   function printPdf() {
-    gkiosaPdfGeneratorInvoice.print();
+    gkiosaPdfGeneratorInvoice.print({invoice: self.invoice, user: self.invoice.user});
   }
 
   function downloadPdf() {
-    gkiosaPdfGeneratorInvoice.download('timologio.pdf');
+    gkiosaPdfGeneratorInvoice.download('timologio.pdf', {invoice: self.invoice, user: self.invoice.user});
   }
 
 }

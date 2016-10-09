@@ -23,10 +23,10 @@
       <tr ng-repeat="row in $data track by row._id">
         <td title="'Όνομα'" filter="{name: 'text'}" sortable="'name'">{{row.name}}</td>
         <td title="'Κωδικός'" filter="{code: 'text'}" sortable="'code'">{{row.code}}</td>
-        <td title="'Χρέως'" filter="{debt: 'number'}" sortable="'debt'">{{row.debt}}</td>
         <td title="'Α.Φ.Μ'" filter="{vat: 'text'}" sortable="'vat'">{{row.vat}}</td>
         <td title="'Δ.Ο.Υ.'" filter="{taxAuthority: 'text'}" sortable="'taxAuthority'">{{row.taxAuthority}}</td>
         <td title="'Διεύθυνση'" filter="{address: 'text'}" sortable="'address'">{{row.address}}</td>
+        <td title="'Τηλέφωνο'" filter="{phone: 'text'}">{{row.phone}}</td>
         <td title="'Επάγγελμα'" filter="{profession: 'text'}" sortable="'profession'">{{row.profession}}</td>
         <td>
           <button type="button" ng-click="allUsersCtrl.editUser(row)" class="btn btn-primary btn-sm" title="Επεξεργασία"><i class="fa fa-pencil"></i></button>

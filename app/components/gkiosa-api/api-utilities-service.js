@@ -194,7 +194,8 @@ function gkiosaApiUtilities($rootScope, $q, $state, $ngBootbox, toastr, gkiosaAp
       credit: false,
       userId: undefined,
       user: undefined,
-      invoiceNum: undefined
+      invoiceNum: undefined,
+
     };
   }
 

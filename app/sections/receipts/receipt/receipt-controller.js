@@ -6,7 +6,7 @@ angular.module('gkiosa.app.sections.receipts.receipt')
 
 .controller('ReceiptController', ReceiptController);
 
-function ReceiptController($rootScope, $state, $stateParams, toastr, gkiosaApi, gkiosaApiUtilities) {
+function ReceiptController($rootScope, $state, $stateParams, toastr, gkiosaApi, gkiosaApiUtilities, gkiosaPagination) {
   const self = this;
 
   self.vector = $stateParams.vector;
@@ -28,7 +28,6 @@ function ReceiptController($rootScope, $state, $stateParams, toastr, gkiosaApi, 
         .then(appInfo => {
           self.appInfo = appInfo;
           self.receipt = gkiosaApiUtilities.createEmptyReceipt(appInfo.receiptId);
-          self.invoiceProductsTableParams = gkiosaPagination.createStaticNgTableParams(self.invoice.products);
         });
 
     }
