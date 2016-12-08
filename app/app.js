@@ -183,5 +183,3 @@ function AppController($rootScope, $scope, $state, gkiosaInitApp) {
 		}];
 	}
 };
-
-var x;
